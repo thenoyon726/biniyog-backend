@@ -225,5 +225,34 @@ router.post('/notify-all', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
-
+const Setting = require('../models/Setting');
+ 
+// GET /api/admin/settings
+router.get('/settings', async (req, res) => {
+  try {
+    let settings = await Setting.findOne();
+    if (!settings) settings = await Setting.create({});
+    res.json({ success: true, settings });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
+ 
+// PUT /api/admin/settings
+router.put('/settings', async (req, res) => {
+  try {
+    const { bkashNumber, nagadNumber, rocketNumber, minDeposit, minWithdraw } = req.body;
+    let settings = await Setting.findOne();
+    if (!settings) settings = new Setting();
+    if (bkashNumber  !== undefined) settings.bkashNumber  = bkashNumber;
+    if (nagadNumber  !== undefined) settings.nagadNumber  = nagadNumber;
+    if (rocketNumber !== undefined) settings.rocketNumber = rocketNumber;
+    if (minDeposit   !== undefined) settings.minDeposit   = minDeposit;
+    if (minWithdraw  !== undefined) settings.minWithdraw  = minWithdraw;
+    await settings.save();
+    res.json({ success: true, message: 'সেটিংস সংরক্ষিত হয়েছে।', settings });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 module.exports = router;
