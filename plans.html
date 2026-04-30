@@ -595,7 +595,7 @@
         <span>💸 সর্বনিম্ন ৳৬০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn"onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P1 স্টার্টার প্ল্যান', 600, 20, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P2 -->
@@ -618,7 +618,7 @@
         <span>💸 সর্বনিম্ন ৳১,৫০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P2 বেসিক প্ল্যান', 1500, 50, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P3 -->
@@ -641,7 +641,7 @@
         <span>💸 সর্বনিম্ন ৳৩,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P3 সিলভার প্ল্যান', 3000, 100, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P4 -->
@@ -664,7 +664,7 @@
         <span>💸 সর্বনিম্ন ৳৫,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P4 গোল্ড প্ল্যান', 5000, 165, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P5 -->
@@ -687,7 +687,7 @@
         <span>💸 সর্বনিম্ন ৳১০,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P5 প্লাটিনাম প্ল্যান', 10000, 330, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P6 -->
@@ -710,7 +710,7 @@
         <span>💸 সর্বনিম্ন ৳১৫,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P6 ডায়মন্ড প্ল্যান', 15000, 500, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P7 -->
@@ -733,7 +733,7 @@
         <span>💸 সর্বনিম্ন ৳২৫,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P7 এলিট প্ল্যান', 25000, 830, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P8 -->
@@ -756,7 +756,7 @@
         <span>💸 সর্বনিম্ন ৳৩০,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P8 প্রিমিয়াম প্ল্যান', 30000, 1000, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
     <!-- P9 -->
@@ -779,7 +779,7 @@
         <span>💸 সর্বনিম্ন ৳৫০,০০০</span>
       </div>
       <br/>
-      <button class="plan-invest-btn" onclick="window.location.href='login.html'">এখনই বিনিয়োগ করুন →</button>
+      <button class="plan-invest-btn" onclick="investNow('P9 VIP প্ল্যান', 50000, 1650, 3.3, 30)">এখনই বিনিয়োগ করুন →</button>
     </div>
 
   </div>
@@ -820,6 +820,137 @@
     <span class="nav-label">প্রোফাইল</span>
   </a>
 </nav>
+
+
+<!-- ── Purchase Modal ── -->
+<div id="investModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:999; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#1a1d27; border:1px solid #2e3347; border-radius:20px; padding:24px; width:100%; max-width:360px;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <div style="font-size:36px; margin-bottom:8px;">💰</div>
+      <div style="font-size:17px; font-weight:800; color:#e8eaf6;" id="modalPlanName"></div>
+      <div style="font-size:12px; color:#8892b0; margin-top:4px;">বিনিয়োগ নিশ্চিত করুন</div>
+    </div>
+    <div style="background:#22263a; border-radius:12px; padding:14px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #2e3347; font-size:13px;">
+        <span style="color:#8892b0;">দৈনিক আয়</span>
+        <span style="color:#1a9e2e; font-weight:800;" id="modalDaily"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #2e3347; font-size:13px;">
+        <span style="color:#8892b0;">মেয়াদ</span>
+        <span style="color:#e8eaf6; font-weight:700;" id="modalDuration"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; font-size:13px;">
+        <span style="color:#8892b0;">আপনার ব্যালেন্স</span>
+        <span style="color:#f59e0b; font-weight:800;" id="modalBalance">লোড হচ্ছে...</span>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px; color:#8892b0; display:block; margin-bottom:6px;">বিনিয়োগের পরিমাণ (৳)</label>
+      <input type="number" id="investAmountInput" placeholder="পরিমাণ লিখুন"
+        style="width:100%; background:#22263a; border:1px solid #2e3347; border-radius:10px; padding:10px 12px; color:#e8eaf6; font-size:14px; font-family:Manrope,sans-serif; outline:none;"/>
+      <div style="font-size:11px; color:#8892b0; margin-top:4px;" id="modalMinMax"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <button onclick="closeModal()" style="background:#22263a; border:1px solid #2e3347; color:#e8eaf6; border-radius:10px; padding:12px; font-size:13px; font-weight:700; cursor:pointer; font-family:Manrope,sans-serif;">বাতিল</button>
+      <button id="confirmBtn" onclick="confirmInvest()" style="background:linear-gradient(135deg,#1a9e2e,#0d6e1f); border:none; color:#fff; border-radius:10px; padding:12px; font-size:13px; font-weight:700; cursor:pointer; font-family:Manrope,sans-serif;">✅ নিশ্চিত করুন</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="display:none; position:fixed; bottom:90px; left:50%; transform:translateX(-50%); color:#fff; padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; z-index:9999; white-space:nowrap;"></div>
+
+<script>
+const API = 'https://biniyog-backend.vercel.app/api';
+let currentPlan = {};
+let userBalance = 0;
+
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1a9e2e';
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+async function investNow(name, minAmount, daily, pct, days) {
+  const token = localStorage.getItem('token');
+  if (!token) { window.location.href = 'login.html'; return; }
+
+  currentPlan = { name, minAmount, daily, pct, days };
+  document.getElementById('modalPlanName').textContent = name;
+  document.getElementById('modalDaily').textContent = '৳' + daily + '/দিন';
+  document.getElementById('modalDuration').textContent = days + ' দিন';
+  document.getElementById('modalBalance').textContent = 'লোড হচ্ছে...';
+  document.getElementById('investAmountInput').value = minAmount;
+  document.getElementById('modalMinMax').textContent = 'সর্বনিম্ন: ৳' + minAmount;
+  document.getElementById('investModal').style.display = 'flex';
+
+  try {
+    const res = await fetch(API + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    if (data.success) {
+      userBalance = data.user.balance || 0;
+      document.getElementById('modalBalance').textContent = '৳' + userBalance.toLocaleString();
+    } else {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+  } catch(e) {
+    document.getElementById('modalBalance').textContent = 'লোড ব্যর্থ';
+  }
+}
+
+function closeModal() {
+  document.getElementById('investModal').style.display = 'none';
+}
+
+async function confirmInvest() {
+  const token = localStorage.getItem('token');
+  const amount = parseFloat(document.getElementById('investAmountInput').value);
+
+  if (!amount || amount < currentPlan.minAmount) {
+    showToast('❌ সর্বনিম্ন ৳' + currentPlan.minAmount + ' বিনিয়োগ করুন', '#ef4444');
+    return;
+  }
+
+  if (userBalance < amount) {
+    closeModal();
+    showToast('💳 ব্যালেন্স কম! ডিপোজিট করুন', '#f59e0b');
+    setTimeout(() => window.location.href = 'deposit.html', 1500);
+    return;
+  }
+
+  const btn = document.getElementById('confirmBtn');
+  btn.textContent = 'প্রসেস হচ্ছে...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API + '/plans/invest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ planName: currentPlan.name, amount })
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeModal();
+      showToast('🎉 বিনিয়োগ সফল হয়েছে!', '#1a9e2e');
+      setTimeout(() => window.location.href = 'dashboard.html', 2000);
+    } else {
+      showToast('❌ ' + (data.message || 'বিনিয়োগ ব্যর্থ'), '#ef4444');
+      btn.textContent = '✅ নিশ্চিত করুন';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    showToast('❌ সংযোগ সমস্যা!', '#ef4444');
+    btn.textContent = '✅ নিশ্চিত করুন';
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('investModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
 
 </body>
 </html>
