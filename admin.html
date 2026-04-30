@@ -80,6 +80,7 @@ td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
       <a class="nav-item" href="#" onclick="showSection('users')"><span class="material-symbols-outlined">group</span> ইউজার</a>
       <a class="nav-item" href="#" onclick="showSection('plans')"><span class="material-symbols-outlined">trending_up</span> প্ল্যান</a>
       <a class="nav-item" href="#" onclick="showSection('broadcast')"><span class="material-symbols-outlined">campaign</span> বার্তা পাঠান</a>
+      <a class="nav-item" href="#" onclick="showSection('settings')"><span class="material-symbols-outlined">settings</span> সেটিংস</a>
     </div>
     <div class="nav-section">
       <div class="nav-label">আরও</div>
@@ -275,7 +276,29 @@ td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
         </button>
       </div>
     </div>
-
+<!-- ════ SETTINGS SECTION ════ -->
+    <div id="sec-settings" style="display:none">
+      <div class="broadcast-box" style="max-width:560px">
+        <div class="section-title" style="margin-bottom:16px;font-size:14px;font-weight:800;color:var(--text)">
+          <span class="material-symbols-outlined">payments</span> পেমেন্ট নম্বর সেটিংস
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 bKash নম্বর</label>
+          <input type="text" id="setBkash" class="form-input" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 Nagad নম্বর</label>
+          <input type="text" id="setNagad" class="form-input" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 Rocket নম্বর</label>
+          <input type="text" id="setRocket" class="form-input" placeholder="01XXXXXXXXX"/>
+        </div>
+        <button class="btn btn-primary btn-full" id="saveSettingsBtn" onclick="saveSettings()">
+          <span class="material-symbols-outlined">save</span> সংরক্ষণ করুন
+        </button>
+      </div>
+    </div>
   </div><!-- end page-content -->
 </main>
 
@@ -375,7 +398,7 @@ const sectionTitles = {
   withdraws: ['💸 উইথড্র ম্যানেজমেন্ট', 'উইথড্র অনুমোদন/বাতিল করুন'],
   users: ['👥 ইউজার ম্যানেজমেন্ট', 'সব ইউজারের তালিকা'],
   plans: ['📈 প্ল্যান ম্যানেজমেন্ট', 'বিনিয়োগ প্ল্যান তৈরি/সম্পাদনা'],
-  broadcast: ['📢 যোগাযোগ', 'বার্তা ও ব্যালেন্স নিয়ন্ত্রণ']
+  broadcast: ['📢 যোগাযোগ', 'বার্তা ও ব্যালেন্স নিয়ন্ত্রণ'],settings: ['⚙️ সেটিংস', 'পেমেন্ট নম্বর ও সিস্টেম সেটিংস']
 };
 
 function showSection(sec) {
@@ -384,7 +407,7 @@ function showSection(sec) {
   document.getElementById('sectionTitle').textContent = sectionTitles[sec][0];
   document.getElementById('sectionSub').textContent = sectionTitles[sec][1];
   document.querySelectorAll('.sidebar .nav-item').forEach((el,i) => {
-    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast'];
+    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast','settings'];
     el.classList.toggle('active', secs[i] === sec);
   });
   currentSection = sec;
@@ -393,6 +416,7 @@ function showSection(sec) {
   if (sec === 'withdraws') loadWithdraws();
   if (sec === 'users') loadUsers();
   if (sec === 'plans') loadAdminPlans();
+  if (sec === 'settings') loadSettings();
 }
 
 // ── Stats ────────────────────────────────
@@ -734,6 +758,30 @@ function debounce(fn, delay) {
 document.getElementById('planModal').addEventListener('click', e => { if(e.target===document.getElementById('planModal')) closePlanModal(); });
 document.getElementById('rejectModal').addEventListener('click', e => { if(e.target===document.getElementById('rejectModal')) closeRejectModal(); });
 
+  // ── Settings ──────────────────────────────
+async function loadSettings() {
+  const res = await fetch('https://biniyog-backend.vercel.app/api/settings');
+  const data = await res.json();
+  if (data?.success && data.settings) {
+    document.getElementById('setBkash').value = data.settings.bkashNumber || '';
+    document.getElementById('setNagad').value = data.settings.nagadNumber || '';
+    document.getElementById('setRocket').value = data.settings.rocketNumber || '';
+  }
+}
+
+async function saveSettings() {
+  const body = {
+    bkashNumber: document.getElementById('setBkash').value.trim(),
+    nagadNumber: document.getElementById('setNagad').value.trim(),
+    rocketNumber: document.getElementById('setRocket').value.trim()
+  };
+  const btn = document.getElementById('saveSettingsBtn');
+  btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে...';
+  const data = await apiFetch('/admin/settings', { method:'POST', body });
+  btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">save</span> সংরক্ষণ করুন';
+  if (data?.success) showToast('সেটিংস সংরক্ষণ হয়েছে ✅', 'success');
+  else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
+}
 // ── Init ──────────────────────────────────
 showSection('dashboard');
 </script>
