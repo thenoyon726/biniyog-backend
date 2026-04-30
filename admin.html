@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>অ্যাডমিন প্যানেল - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+/* ── Admin Sidebar overrides ── */
+.sidebar { background:#0a0f0b; border-color:rgba(255,255,255,0.04); }
+.nav-item.active { background:rgba(253,192,3,0.1); color:var(--gold); border-color:rgba(253,192,3,0.2); }
+.logo-icon { background:linear-gradient(135deg,#b8860b,#fdc003); }
+
+/* ── Stats grid ── */
+.admin-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+.astat {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:18px; position:relative; overflow:hidden;
+}
+.astat::before { content:''; position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; opacity:.06; }
+.astat-icon { font-size:22px; margin-bottom:10px; }
+.astat-val { font-size:22px; font-weight:800; color:var(--text); }
+.astat-label { font-size:10px; color:var(--text3); font-weight:600; letter-spacing:.5px; text-transform:uppercase; margin-top:3px; }
+.astat-sub { font-size:11px; font-weight:700; margin-top:6px; }
+
+/* ── Tabs ── */
+.admin-tabs { display:flex; gap:4px; background:var(--surface2); border-radius:12px; padding:4px; margin-bottom:20px; flex-wrap:wrap; }
+.admin-tab { flex:1; min-width:100px; padding:9px 12px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; color:var(--text3); text-align:center; transition:.15s; white-space:nowrap; }
+.admin-tab.active { background:var(--surface); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+
+/* ── Search/Filter bar ── */
+.action-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.search-input { flex:1; min-width:200px; padding:9px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:'Manrope',sans-serif; font-size:12px; outline:none; }
+.search-input:focus { border-color:var(--primary); }
+
+/* ── Table rows ── */
+.tbl-action { display:flex; gap:6px; }
+td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
+.btn-approve { background:var(--primary-glow); color:var(--primary); border:1px solid rgba(26,158,46,0.3); }
+.btn-approve:hover { background:var(--primary); color:white; }
+.btn-reject { background:var(--red-dim); color:var(--red); border:1px solid rgba(255,82,82,0.2); }
+.btn-reject:hover { background:var(--red); color:white; }
+
+/* ── Plan form ── */
+.plan-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-bottom:20px; }
+.admin-plan-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.apc-name { font-size:13px; font-weight:800; color:var(--text); margin-bottom:4px; }
+.apc-detail { font-size:11px; color:var(--text3); line-height:1.6; }
+.apc-actions { display:flex; gap:6px; margin-top:12px; }
+
+/* ── Broadcast box ── */
+.broadcast-box { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
+
+@media(max-width:1000px){ .admin-stats{grid-template-columns:1fr 1fr;} }
+@media(max-width:600px){ .admin-stats{grid-template-columns:1fr 1fr;} .admin-tab{min-width:80px;font-size:11px;} }
+</style>
+</head>
+<body>
+
+<!-- Admin Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">👑</div>
+    <div><div class="logo-text">অ্যাডমিন</div><div class="logo-sub">Control Panel</div></div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">নিয়ন্ত্রণ</div>
+      <a class="nav-item" href="#" onclick="showSection('dashboard')"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="#" onclick="showSection('deposits')">
+        <span class="material-symbols-outlined">payments</span> ডিপোজিট
+        <span class="nav-badge" id="depositBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" href="#" onclick="showSection('withdraws')">
+        <span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র
+        <span class="nav-badge" id="withdrawBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" href="#" onclick="showSection('users')"><span class="material-symbols-outlined">group</span> ইউজার</a>
+      <a class="nav-item" href="#" onclick="showSection('plans')"><span class="material-symbols-outlined">trending_up</span> প্ল্যান</a>
+      <a class="nav-item" href="#" onclick="showSection('broadcast')"><span class="material-symbols-outlined">campaign</span> বার্তা পাঠান</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">আরও</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">open_in_new</span> ইউজার সাইট</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar" style="background:linear-gradient(135deg,#b8860b,#fdc003)">A</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">অ্যাডমিন</div><div class="user-role" id="sidebarRole">👑 সুপার অ্যাডমিন</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="sectionTitle">📊 অ্যাডমিন ড্যাশবোর্ড</div>
+      <div class="topbar-sub" id="sectionSub">সম্পূর্ণ নিয়ন্ত্রণ প্যানেল</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-secondary btn-sm" onclick="loadStats()">
+        <span class="material-symbols-outlined" style="font-size:14px">refresh</span> রিফ্রেশ
+      </button>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ════ DASHBOARD SECTION ════ -->
+    <div id="sec-dashboard">
+      <div class="admin-stats" id="statsGrid">
+        <div class="astat" style="border-color:rgba(26,158,46,0.2)">
+          <div class="astat-icon">👥</div>
+          <div class="astat-val" id="st-users">—</div>
+          <div class="astat-label">মোট ইউজার</div>
+          <div class="astat-sub" style="color:var(--primary)" id="st-activeUsers">— জন সক্রিয়</div>
+        </div>
+        <div class="astat" style="border-color:rgba(77,171,247,0.2)">
+          <div class="astat-icon">💰</div>
+          <div class="astat-val" id="st-deposit">—</div>
+          <div class="astat-label">মোট ডিপোজিট</div>
+          <div class="astat-sub" style="color:var(--gold)" id="st-pendingDep">— টি অপেক্ষমান</div>
+        </div>
+        <div class="astat" style="border-color:rgba(255,82,82,0.2)">
+          <div class="astat-icon">💸</div>
+          <div class="astat-val" id="st-withdraw">—</div>
+          <div class="astat-label">পেন্ডিং উইথড্র</div>
+          <div class="astat-sub" style="color:var(--red)" id="st-pendingWth">— টি আবেদন</div>
+        </div>
+        <div class="astat" style="border-color:rgba(253,192,3,0.2)">
+          <div class="astat-icon">📈</div>
+          <div class="astat-val" id="st-investment">—</div>
+          <div class="astat-label">সক্রিয় বিনিয়োগ</div>
+          <div class="astat-sub" style="color:var(--gold)">এখন চলমান</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">⏳ সাম্প্রতিক ডিপোজিট</span><span class="card-link" onclick="showSection('deposits')">সব দেখুন</span></div>
+          <div id="quickDeposits"><div class="spinner"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">⏳ সাম্প্রতিক উইথড্র</span><span class="card-link" onclick="showSection('withdraws')">সব দেখুন</span></div>
+          <div id="quickWithdraws"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ DEPOSITS SECTION ════ -->
+    <div id="sec-deposits" style="display:none">
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="setDepositFilter('pending',this)">⏳ অপেক্ষমান</div>
+        <div class="admin-tab" onclick="setDepositFilter('approved',this)">✅ অনুমোদিত</div>
+        <div class="admin-tab" onclick="setDepositFilter('rejected',this)">❌ বাতিল</div>
+        <div class="admin-tab" onclick="setDepositFilter('',this)">সব</div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>তারিখ</th><th>ইউজার</th><th>পরিমাণ</th><th>পদ্ধতি</th><th>TrxID</th><th>নম্বর</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead>
+            <tbody id="depositTable"><tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="depositPagination"></div>
+      </div>
+    </div>
+
+    <!-- ════ WITHDRAWS SECTION ════ -->
+    <div id="sec-withdraws" style="display:none">
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="setWithdrawFilter('pending',this)">⏳ অপেক্ষমান</div>
+        <div class="admin-tab" onclick="setWithdrawFilter('approved',this)">✅ সম্পন্ন</div>
+        <div class="admin-tab" onclick="setWithdrawFilter('rejected',this)">❌ বাতিল</div>
+        <div class="admin-tab" onclick="setWithdrawFilter('',this)">সব</div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>তারিখ</th><th>ইউজার</th><th>পরিমাণ</th><th>পদ্ধতি</th><th>প্রাপক নম্বর</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead>
+            <tbody id="withdrawTable"><tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="withdrawPagination"></div>
+      </div>
+    </div>
+
+    <!-- ════ USERS SECTION ════ -->
+    <div id="sec-users" style="display:none">
+      <div class="action-bar">
+        <input class="search-input" id="userSearch" placeholder="নাম বা মোবাইল দিয়ে খুঁজুন..." oninput="debounce(loadUsers,500)()"/>
+        <select class="search-input" style="flex:0;width:auto" onchange="loadUsers()" id="userStatusFilter">
+          <option value="">সব ইউজার</option>
+          <option value="active">সক্রিয়</option>
+          <option value="inactive">নিষ্ক্রিয়</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>নাম</th><th>মোবাইল</th><th>ব্যালেন্স</th><th>মোট ডিপোজিট</th><th>মোট মুনাফা</th><th>যোগদান</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead>
+            <tbody id="usersTable"><tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="userPagination"></div>
+      </div>
+    </div>
+
+    <!-- ════ PLANS SECTION ════ -->
+    <div id="sec-plans" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openPlanModal(null)">
+          <span class="material-symbols-outlined">add</span> নতুন প্ল্যান যোগ করুন
+        </button>
+      </div>
+      <div class="plan-cards" id="adminPlanCards">
+        <div style="text-align:center;padding:40px;color:var(--text3)"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ════ BROADCAST SECTION ════ -->
+    <div id="sec-broadcast" style="display:none">
+      <div class="broadcast-box" style="max-width:560px">
+        <div class="section-title" style="margin-bottom:16px;font-size:14px;font-weight:800;color:var(--text)">
+          <span class="material-symbols-outlined">campaign</span> সকল ইউজারকে বার্তা পাঠান
+        </div>
+        <div class="form-group">
+          <label class="form-label">বার্তার শিরোনাম</label>
+          <input type="text" id="broadTitle" class="form-input" placeholder="যেমন: বিশেষ অফার! 🎉"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">বার্তার বিষয়বস্তু</label>
+          <textarea id="broadMsg" class="form-input" rows="4" placeholder="সব ইউজারকে যে বার্তা পাঠাতে চান..." style="resize:vertical"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">বার্তার ধরন</label>
+          <select id="broadType" class="form-input">
+            <option value="info">ℹ️ তথ্য</option>
+            <option value="success">✅ সাফল্য</option>
+            <option value="warning">⚠️ সতর্কতা</option>
+            <option value="system">🔧 সিস্টেম</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" id="broadcastBtn" onclick="sendBroadcast()">
+          <span class="material-symbols-outlined">send</span> সবাইকে পাঠান
+        </button>
+      </div>
+
+      <!-- Add balance to user -->
+      <div class="broadcast-box" style="max-width:560px;margin-top:20px">
+        <div class="section-title" style="margin-bottom:16px;font-size:14px;font-weight:800;color:var(--text)">
+          <span class="material-symbols-outlined">add_card</span> ইউজারকে ব্যালেন্স যোগ করুন
+        </div>
+        <div class="form-group">
+          <label class="form-label">মোবাইল নম্বর</label>
+          <input type="text" id="balMobile" class="form-input" placeholder="ইউজারের মোবাইল নম্বর" oninput="findUser()"/>
+          <div id="foundUser" style="font-size:11px;margin-top:5px;color:var(--primary)"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">পরিমাণ (টাকা)</label>
+          <input type="number" id="balAmount" class="form-input" placeholder="যোগ করার পরিমাণ"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">নোট</label>
+          <input type="text" id="balNote" class="form-input" placeholder="কারণ লিখুন (ঐচ্ছিক)"/>
+        </div>
+        <button class="btn btn-primary btn-full" id="addBalBtn" onclick="addBalance()">
+          <span class="material-symbols-outlined">add</span> ব্যালেন্স যোগ করুন
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+</main>
+
+<!-- Plan Modal -->
+<div class="modal-overlay" id="planModal">
+  <div class="modal" style="max-width:500px;overflow-y:auto;max-height:90vh">
+    <div class="modal-title" id="planModalTitle">নতুন প্ল্যান</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">প্ল্যানের নাম (বাংলা)</label>
+        <input type="text" id="pName" class="form-input" placeholder="যেমন: স্টার্টার প্ল্যান"/>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">বিবরণ</label>
+        <input type="text" id="pDesc" class="form-input" placeholder="সংক্ষিপ্ত বিবরণ"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">সর্বনিম্ন বিনিয়োগ (৳)</label>
+        <input type="number" id="pMin" class="form-input" placeholder="500"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">সর্বোচ্চ বিনিয়োগ (৳)</label>
+        <input type="number" id="pMax" class="form-input" placeholder="99999"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">দৈনিক রিটার্ন (%)</label>
+        <input type="number" id="pDailyRate" class="form-input" placeholder="1.5" step="0.1"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">মোট রিটার্ন (%)</label>
+        <input type="number" id="pTotalReturn" class="form-input" placeholder="45"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">মেয়াদ (দিন)</label>
+        <input type="number" id="pDuration" class="form-input" placeholder="30"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">আইকন (Emoji)</label>
+        <input type="text" id="pIcon" class="form-input" placeholder="💰"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ব্যাজ (ঐচ্ছিক)</label>
+        <input type="text" id="pBadge" class="form-input" placeholder="জনপ্রিয়"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ক্রম নম্বর</label>
+        <input type="number" id="pSort" class="form-input" placeholder="1"/>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">সক্রিয়</label>
+        <select id="pActive" class="form-input">
+          <option value="true">হ্যাঁ</option>
+          <option value="false">না</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closePlanModal()">বাতিল</button>
+      <button class="btn btn-primary" style="flex:1" id="savePlanBtn" onclick="savePlan()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal">
+    <div class="modal-title">❌ আবেদন বাতিল করুন</div>
+    <div class="form-group">
+      <label class="form-label">বাতিলের কারণ (ঐচ্ছিক)</label>
+      <textarea id="rejectNote" class="form-input" rows="3" placeholder="কারণ লিখুন..." style="resize:none"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeRejectModal()">বাতিল</button>
+      <button class="btn btn-danger" style="flex:1;background:var(--red);color:white" onclick="confirmReject()">বাতিল করুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth(true); // admin only
+
+let currentSection = 'dashboard';
+let depositFilter = 'pending', withdrawFilter = 'pending';
+let depPage = 1, wthPage = 1, usrPage = 1;
+let editingPlanId = null;
+let rejectingTxnId = null;
+let foundUserId = null;
+
+// ── Section navigation ───────────────────
+const sectionTitles = {
+  dashboard: ['📊 অ্যাডমিন ড্যাশবোর্ড', 'সামগ্রিক পরিসংখ্যান'],
+  deposits: ['💰 ডিপোজিট ম্যানেজমেন্ট', 'ডিপোজিট অনুমোদন/বাতিল করুন'],
+  withdraws: ['💸 উইথড্র ম্যানেজমেন্ট', 'উইথড্র অনুমোদন/বাতিল করুন'],
+  users: ['👥 ইউজার ম্যানেজমেন্ট', 'সব ইউজারের তালিকা'],
+  plans: ['📈 প্ল্যান ম্যানেজমেন্ট', 'বিনিয়োগ প্ল্যান তৈরি/সম্পাদনা'],
+  broadcast: ['📢 যোগাযোগ', 'বার্তা ও ব্যালেন্স নিয়ন্ত্রণ']
+};
+
+function showSection(sec) {
+  document.querySelectorAll('[id^="sec-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('sec-' + sec).style.display = 'block';
+  document.getElementById('sectionTitle').textContent = sectionTitles[sec][0];
+  document.getElementById('sectionSub').textContent = sectionTitles[sec][1];
+  document.querySelectorAll('.sidebar .nav-item').forEach((el,i) => {
+    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast'];
+    el.classList.toggle('active', secs[i] === sec);
+  });
+  currentSection = sec;
+  if (sec === 'dashboard') { loadStats(); loadQuick(); }
+  if (sec === 'deposits') loadDeposits();
+  if (sec === 'withdraws') loadWithdraws();
+  if (sec === 'users') loadUsers();
+  if (sec === 'plans') loadAdminPlans();
+}
+
+// ── Stats ────────────────────────────────
+async function loadStats() {
+  const data = await apiFetch('/admin/stats');
+  if (!data?.success) return;
+  const s = data.stats;
+  document.getElementById('st-users').textContent = s.totalUsers.toLocaleString();
+  document.getElementById('st-activeUsers').textContent = `${s.activeUsers} জন সক্রিয়`;
+  document.getElementById('st-deposit').textContent = formatBDTEn(s.totalDeposit);
+  document.getElementById('st-pendingDep').textContent = `${s.pendingDeposits} টি অপেক্ষমান`;
+  document.getElementById('st-withdraw').textContent = formatBDTEn(s.pendingWithdrawAmount);
+  document.getElementById('st-pendingWth').textContent = `${s.pendingWithdraws} টি আবেদন`;
+  document.getElementById('st-investment').textContent = formatBDTEn(s.totalActiveInvestment);
+  // Badges
+  if (s.pendingDeposits > 0) { document.getElementById('depositBadge').textContent = s.pendingDeposits; document.getElementById('depositBadge').style.display = 'flex'; }
+  if (s.pendingWithdraws > 0) { document.getElementById('withdrawBadge').textContent = s.pendingWithdraws; document.getElementById('withdrawBadge').style.display = 'flex'; }
+}
+
+async function loadQuick() {
+  const [dep, wth] = await Promise.all([
+    apiFetch('/admin/transactions?type=deposit&status=pending&limit=5'),
+    apiFetch('/admin/transactions?type=withdraw&status=pending&limit=5')
+  ]);
+  renderQuick('quickDeposits', dep, 'deposit');
+  renderQuick('quickWithdraws', wth, 'withdraw');
+}
+
+function renderQuick(elId, data, type) {
+  const el = document.getElementById(elId);
+  if (!data?.success || !data.transactions.length) { el.innerHTML = '<div class="empty-state" style="padding:20px"><p>কোনো পেন্ডিং নেই ✅</p></div>'; return; }
+  el.innerHTML = data.transactions.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${t.user?.name || '—'}</div>
+        <div style="font-size:10px;color:var(--text3)">${t.user?.mobile || ''} · ${formatDateTime(t.createdAt)}</div>
+      </div>
+      <div style="font-size:13px;font-weight:800;color:${type==='deposit'?'var(--primary)':'var(--red)'}">${formatBDTEn(t.amount)}</div>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-approve btn-sm" onclick="approve('${t._id}','${type}')">✓</button>
+        <button class="btn btn-reject btn-sm" onclick="openReject('${t._id}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Deposits ─────────────────────────────
+function setDepositFilter(f, el) {
+  depositFilter = f; depPage = 1;
+  document.querySelectorAll('#sec-deposits .admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadDeposits();
+}
+
+async function loadDeposits() {
+  let url = `/admin/transactions?type=deposit&page=${depPage}&limit=15`;
+  if (depositFilter) url += `&status=${depositFilter}`;
+  const data = await apiFetch(url);
+  const tbody = document.getElementById('depositTable');
+  if (!data?.success || !data.transactions.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">কোনো রেকর্ড নেই</td></tr>'; return; }
+  tbody.innerHTML = data.transactions.map(t => `
+    <tr>
+      <td>${formatDate(t.createdAt)}</td>
+      <td><div style="font-weight:700">${t.user?.name||'—'}</div><div style="font-size:10px;color:var(--text3)">${t.user?.mobile||''}</div></td>
+      <td style="font-weight:800;color:var(--primary)">${formatBDTEn(t.amount)}</td>
+      <td style="text-transform:uppercase">${t.paymentMethod||'—'}</td>
+      <td style="font-size:11px">${t.transactionId||'—'}</td>
+      <td>${t.senderNumber||'—'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>
+        ${t.status==='pending'?`
+          <div class="tbl-action">
+            <button class="btn btn-approve" onclick="approve('${t._id}','deposit')">✓ অনুমোদন</button>
+            <button class="btn btn-reject" onclick="openReject('${t._id}')">✕ বাতিল</button>
+          </div>
+        ` : (t.adminNote ? `<span style="font-size:10px;color:var(--text3)">${t.adminNote}</span>` : '—')}
+      </td>
+    </tr>
+  `).join('');
+  renderAdminPagination('depositPagination', data.pagination, depPage, p => { depPage=p; loadDeposits(); });
+}
+
+// ── Withdraws ────────────────────────────
+function setWithdrawFilter(f, el) {
+  withdrawFilter = f; wthPage = 1;
+  document.querySelectorAll('#sec-withdraws .admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadWithdraws();
+}
+
+async function loadWithdraws() {
+  let url = `/admin/transactions?type=withdraw&page=${wthPage}&limit=15`;
+  if (withdrawFilter) url += `&status=${withdrawFilter}`;
+  const data = await apiFetch(url);
+  const tbody = document.getElementById('withdrawTable');
+  if (!data?.success || !data.transactions.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">কোনো রেকর্ড নেই</td></tr>'; return; }
+  tbody.innerHTML = data.transactions.map(t => `
+    <tr>
+      <td>${formatDate(t.createdAt)}</td>
+      <td><div style="font-weight:700">${t.user?.name||'—'}</div><div style="font-size:10px;color:var(--text3)">${t.user?.mobile||''}</div></td>
+      <td style="font-weight:800;color:var(--red)">${formatBDTEn(t.amount)}</td>
+      <td style="text-transform:uppercase">${t.paymentMethod||'—'}</td>
+      <td>${t.senderNumber||'—'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>
+        ${t.status==='pending'?`
+          <div class="tbl-action">
+            <button class="btn btn-approve" onclick="approve('${t._id}','withdraw')">✓ সম্পন্ন</button>
+            <button class="btn btn-reject" onclick="openReject('${t._id}')">✕ বাতিল</button>
+          </div>
+        ` : (t.adminNote ? `<span style="font-size:10px;color:var(--text3)">${t.adminNote}</span>` : '—')}
+      </td>
+    </tr>
+  `).join('');
+  renderAdminPagination('withdrawPagination', data.pagination, wthPage, p => { wthPage=p; loadWithdraws(); });
+}
+
+// ── Users ────────────────────────────────
+async function loadUsers() {
+  const search = document.getElementById('userSearch')?.value || '';
+  const status = document.getElementById('userStatusFilter')?.value || '';
+  let url = `/admin/users?page=${usrPage}&limit=15`;
+  if (search) url += `&search=${encodeURIComponent(search)}`;
+  if (status) url += `&status=${status}`;
+  const data = await apiFetch(url);
+  const tbody = document.getElementById('usersTable');
+  if (!data?.success || !data.users.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">কোনো ইউজার নেই</td></tr>'; return; }
+  tbody.innerHTML = data.users.map(u => `
+    <tr>
+      <td><div style="font-weight:700">${u.name}</div><div style="font-size:10px;color:var(--text3)">${u.referralCode||''}</div></td>
+      <td>${u.mobile}</td>
+      <td style="font-weight:700;color:var(--primary)">${formatBDTEn(u.balance)}</td>
+      <td>${formatBDTEn(u.totalDeposit)}</td>
+      <td style="color:var(--gold)">${formatBDTEn(u.totalProfit)}</td>
+      <td>${formatDate(u.createdAt)}</td>
+      <td>${u.isActive ? '<span class="badge badge-approved">সক্রিয়</span>' : '<span class="badge badge-rejected">নিষ্ক্রিয়</span>'}</td>
+      <td>
+        <div class="tbl-action">
+          <button class="btn ${u.isActive?'btn-reject':'btn-approve'}" onclick="toggleUser('${u._id}','${u.name}',${u.isActive})">
+            ${u.isActive ? '🔒 বন্ধ' : '✓ চালু'}
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="quickAddBalance('${u._id}','${u.name}')">+ ব্যালেন্স</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  renderAdminPagination('userPagination', data.pagination, usrPage, p => { usrPage=p; loadUsers(); });
+}
+
+async function toggleUser(id, name, isActive) {
+  if (!confirm(`${name} কে ${isActive?'নিষ্ক্রিয়':'সক্রিয়'} করবেন?`)) return;
+  const data = await apiFetch(`/admin/users/${id}/toggle`, { method:'PUT' });
+  if (data?.success) { showToast(data.message, 'success'); loadUsers(); }
+  else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
+}
+
+function quickAddBalance(id, name) {
+  const amount = prompt(`${name} কে কত টাকা যোগ করবেন?`);
+  if (!amount || isNaN(amount) || amount <= 0) return;
+  const note = prompt('কারণ লিখুন (ঐচ্ছিক):') || '';
+  apiFetch(`/admin/users/${id}/add-balance`, { method:'POST', body:{ amount:parseFloat(amount), note } })
+    .then(d => { if (d?.success) { showToast(d.message,'success'); loadUsers(); } else showToast(d?.message||'সমস্যা','error'); });
+}
+
+// ── Plans ────────────────────────────────
+async function loadAdminPlans() {
+  const data = await apiFetch('/admin/plans');
+  const el = document.getElementById('adminPlanCards');
+  if (!data?.success) return;
+  el.innerHTML = data.plans.map(p => `
+    <div class="admin-plan-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:22px">${p.icon||'💰'}</span>
+        <div>
+          <div class="apc-name">${p.name}</div>
+          ${p.badge ? `<span style="font-size:9px;background:var(--gold-dim);color:var(--gold);padding:2px 6px;border-radius:4px;font-weight:700">${p.badge}</span>` : ''}
+        </div>
+      </div>
+      <div class="apc-detail">
+        💵 সীমা: ${formatBDTEn(p.minAmount)} – ${formatBDTEn(p.maxAmount)}<br/>
+        📈 দৈনিক: ${p.returnRate}% | মোট: ${p.totalReturn}%<br/>
+        ⏱ মেয়াদ: ${p.durationDays} দিন<br/>
+        👥 বিনিয়োগকারী: ${p.totalInvestors}<br/>
+        🟢 সক্রিয়: ${p.isActive ? 'হ্যাঁ' : 'না'}
+      </div>
+      <div class="apc-actions">
+        <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openPlanModal('${p._id}')">✏️ সম্পাদনা</button>
+        <button class="btn btn-reject btn-sm" onclick="deletePlan('${p._id}','${p.name}')">🗑 মুছুন</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPlanModal(id) {
+  editingPlanId = id;
+  document.getElementById('planModalTitle').textContent = id ? 'প্ল্যান সম্পাদনা' : 'নতুন প্ল্যান যোগ করুন';
+  if (!id) {
+    ['pName','pDesc','pMin','pMax','pDailyRate','pTotalReturn','pDuration','pIcon','pBadge','pSort'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('pActive').value = 'true';
+  } else {
+    apiFetch('/admin/plans').then(data => {
+      const p = data?.plans?.find(pl => pl._id === id);
+      if (!p) return;
+      document.getElementById('pName').value = p.name || '';
+      document.getElementById('pDesc').value = p.description || '';
+      document.getElementById('pMin').value = p.minAmount || '';
+      document.getElementById('pMax').value = p.maxAmount || '';
+      document.getElementById('pDailyRate').value = p.returnRate || '';
+      document.getElementById('pTotalReturn').value = p.totalReturn || '';
+      document.getElementById('pDuration').value = p.durationDays || '';
+      document.getElementById('pIcon').value = p.icon || '';
+      document.getElementById('pBadge').value = p.badge || '';
+      document.getElementById('pSort').value = p.sortOrder || '';
+      document.getElementById('pActive').value = p.isActive ? 'true' : 'false';
+    });
+  }
+  document.getElementById('planModal').classList.add('open');
+}
+
+function closePlanModal() { document.getElementById('planModal').classList.remove('open'); }
+
+async function savePlan() {
+  const body = {
+    name: document.getElementById('pName').value.trim(),
+    nameEn: document.getElementById('pName').value.trim(),
+    description: document.getElementById('pDesc').value.trim(),
+    minAmount: parseFloat(document.getElementById('pMin').value),
+    maxAmount: parseFloat(document.getElementById('pMax').value),
+    returnRate: parseFloat(document.getElementById('pDailyRate').value),
+    totalReturn: parseFloat(document.getElementById('pTotalReturn').value),
+    durationDays: parseInt(document.getElementById('pDuration').value),
+    icon: document.getElementById('pIcon').value.trim() || '💰',
+    badge: document.getElementById('pBadge').value.trim() || null,
+    sortOrder: parseInt(document.getElementById('pSort').value) || 0,
+    isActive: document.getElementById('pActive').value === 'true'
+  };
+  if (!body.name || !body.minAmount || !body.returnRate) return showToast('সব তথ্য পূরণ করুন।','error');
+  const btn = document.getElementById('savePlanBtn');
+  btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে...';
+  const url = editingPlanId ? `/admin/plans/${editingPlanId}` : '/admin/plans';
+  const method = editingPlanId ? 'PUT' : 'POST';
+  const data = await apiFetch(url, { method, body });
+  btn.disabled = false; btn.textContent = 'সংরক্ষণ করুন';
+  if (data?.success) { showToast(data.message,'success'); closePlanModal(); loadAdminPlans(); }
+  else showToast(data?.message||'সমস্যা হয়েছে।','error');
+}
+
+async function deletePlan(id, name) {
+  if (!confirm(`"${name}" প্ল্যান মুছে ফেলবেন?`)) return;
+  const data = await apiFetch(`/admin/plans/${id}`, { method:'DELETE' });
+  if (data?.success) { showToast(data.message,'success'); loadAdminPlans(); }
+  else showToast(data?.message||'সমস্যা।','error');
+}
+
+// ── Approve/Reject ────────────────────────
+async function approve(id, type) {
+  const data = await apiFetch(`/admin/transactions/${id}/approve`, { method:'PUT' });
+  if (data?.success) {
+    showToast(data.message, 'success');
+    loadStats();
+    if (type === 'deposit') loadDeposits();
+    else loadWithdraws();
+    loadQuick();
+  } else showToast(data?.message||'সমস্যা হয়েছে।','error');
+}
+
+function openReject(id) { rejectingTxnId = id; document.getElementById('rejectNote').value=''; document.getElementById('rejectModal').classList.add('open'); }
+function closeRejectModal() { document.getElementById('rejectModal').classList.remove('open'); rejectingTxnId = null; }
+
+async function confirmReject() {
+  const note = document.getElementById('rejectNote').value.trim();
+  const data = await apiFetch(`/admin/transactions/${rejectingTxnId}/reject`, { method:'PUT', body:{ note } });
+  if (data?.success) {
+    showToast(data.message,'success'); closeRejectModal(); loadStats();
+    loadDeposits(); loadWithdraws(); loadQuick();
+  } else showToast(data?.message||'সমস্যা।','error');
+}
+
+// ── Broadcast ─────────────────────────────
+async function sendBroadcast() {
+  const title = document.getElementById('broadTitle').value.trim();
+  const message = document.getElementById('broadMsg').value.trim();
+  const type = document.getElementById('broadType').value;
+  if (!title || !message) return showToast('শিরোনাম ও বার্তা দিন।','error');
+  const btn = document.getElementById('broadcastBtn');
+  btn.disabled = true; btn.textContent = 'পাঠানো হচ্ছে...';
+  const data = await apiFetch('/admin/notify-all', { method:'POST', body:{ title, message, type } });
+  btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">send</span> সবাইকে পাঠান';
+  if (data?.success) { showToast(data.message,'success'); document.getElementById('broadTitle').value=''; document.getElementById('broadMsg').value=''; }
+  else showToast(data?.message||'সমস্যা।','error');
+}
+
+// Find user for add balance
+let findDebounce;
+async function findUser() {
+  clearTimeout(findDebounce);
+  const mobile = document.getElementById('balMobile').value.trim();
+  if (mobile.length < 11) { document.getElementById('foundUser').textContent=''; foundUserId=null; return; }
+  findDebounce = setTimeout(async () => {
+    const data = await apiFetch(`/admin/users?search=${mobile}&limit=1`);
+    const u = data?.users?.[0];
+    if (u) { foundUserId = u._id; document.getElementById('foundUser').textContent = `✅ পাওয়া গেছে: ${u.name} | ব্যালেন্স: ${formatBDTEn(u.balance)}`; }
+    else { foundUserId = null; document.getElementById('foundUser').textContent = '❌ ইউজার পাওয়া যায়নি'; }
+  }, 400);
+}
+
+async function addBalance() {
+  if (!foundUserId) return showToast('আগে সঠিক মোবাইল নম্বর দিয়ে ইউজার খুঁজুন।','error');
+  const amount = parseFloat(document.getElementById('balAmount').value);
+  const note = document.getElementById('balNote').value.trim();
+  if (!amount || amount <= 0) return showToast('সঠিক পরিমাণ দিন।','error');
+  const btn = document.getElementById('addBalBtn');
+  btn.disabled = true; btn.textContent = 'যোগ হচ্ছে...';
+  const data = await apiFetch(`/admin/users/${foundUserId}/add-balance`, { method:'POST', body:{ amount, note } });
+  btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">add</span> ব্যালেন্স যোগ করুন';
+  if (data?.success) { showToast(data.message,'success'); document.getElementById('balAmount').value=''; document.getElementById('balNote').value=''; document.getElementById('balMobile').value=''; document.getElementById('foundUser').textContent=''; foundUserId=null; }
+  else showToast(data?.message||'সমস্যা।','error');
+}
+
+// ── Pagination Helper ─────────────────────
+function renderAdminPagination(elId, pg, curr, cb) {
+  const el = document.getElementById(elId);
+  if (!pg || pg.pages <= 1) { el.innerHTML=''; return; }
+  let html = `<button class="page-btn" onclick="(${cb})(${curr-1})" ${curr===1?'disabled':''}>‹</button>`;
+  for (let i=1; i<=pg.pages; i++) {
+    if (i===1||i===pg.pages||Math.abs(i-curr)<=1) html += `<button class="page-btn ${i===curr?'active':''}" onclick="(${cb})(${i})">${i}</button>`;
+    else if (Math.abs(i-curr)===2) html += `<span style="color:var(--text3);padding:0 4px">...</span>`;
+  }
+  html += `<button class="page-btn" onclick="(${cb})(${curr+1})" ${curr===pg.pages?'disabled':''}>›</button>`;
+  el.innerHTML = html;
+}
+
+// ── Debounce ──────────────────────────────
+function debounce(fn, delay) {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+// ── Close modal on overlay click ──────────
+document.getElementById('planModal').addEventListener('click', e => { if(e.target===document.getElementById('planModal')) closePlanModal(); });
+document.getElementById('rejectModal').addEventListener('click', e => { if(e.target===document.getElementById('rejectModal')) closeRejectModal(); });
+
+// ── Init ──────────────────────────────────
+showSection('dashboard');
+</script>
+</body>
+</html>

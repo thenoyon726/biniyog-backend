@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ডিপোজিট - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.payment-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.pay-tab {
+  flex:1; min-width:80px; padding:12px 8px;
+  background:var(--surface2); border:2px solid var(--border);
+  border-radius:12px; cursor:pointer; text-align:center;
+  transition:all 0.15s;
+}
+.pay-tab:hover { border-color:var(--border2); }
+.pay-tab.active { border-color:var(--primary); background:var(--primary-glow); }
+.pay-tab .pay-icon { font-size:22px; margin-bottom:4px; }
+.pay-tab .pay-name { font-size:11px; font-weight:700; color:var(--text2); }
+.pay-tab.active .pay-name { color:var(--primary); }
+
+.info-box {
+  background:var(--surface2); border:1px solid var(--border2);
+  border-radius:12px; padding:16px; margin-bottom:20px;
+}
+.info-box-title { font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px; }
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-key { font-size:11px; color:var(--text3); }
+.info-val { font-size:12px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; }
+.copy-btn { font-size:14px !important; cursor:pointer; color:var(--primary); }
+
+.amount-presets { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.preset {
+  padding:6px 14px; background:var(--surface2);
+  border:1px solid var(--border2); border-radius:8px;
+  font-size:12px; font-weight:700; cursor:pointer;
+  color:var(--text2); transition:all 0.15s;
+}
+.preset:hover, .preset.selected { background:var(--primary-glow); border-color:var(--primary); color:var(--primary); }
+
+.steps { display:flex; flex-direction:column; gap:12px; margin-bottom:20px; }
+.step { display:flex; gap:12px; align-items:flex-start; }
+.step-num {
+  width:26px; height:26px; border-radius:50%;
+  background:var(--primary-glow); color:var(--primary);
+  font-size:11px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.step-text { font-size:12px; color:var(--text2); line-height:1.5; }
+.step-text strong { color:var(--text); }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">💰</div>
+    <div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item active" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">💰 ডিপোজিট করুন</div>
+      <div class="topbar-sub">আপনার অ্যাকাউন্টে টাকা যোগ করুন</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content" style="max-width:600px">
+    <!-- Steps -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><span class="card-title">📋 কীভাবে ডিপোজিট করবেন?</span></div>
+      <div class="steps">
+        <div class="step"><div class="step-num">১</div><div class="step-text">নিচে পেমেন্ট পদ্ধতি বেছে নিন (bKash/Nagad/Rocket)</div></div>
+        <div class="step"><div class="step-num">২</div><div class="step-text">দেখানো নম্বরে <strong>Send Money</strong> করুন</div></div>
+        <div class="step"><div class="step-num">৩</div><div class="step-text">ট্র্যানজেকশন আইডি এবং পাঠানো নম্বর দিয়ে নিচের ফর্ম পূরণ করুন</div></div>
+        <div class="step"><div class="step-num">৪</div><div class="step-text">অ্যাডমিন যাচাই করে আপনার ব্যালেন্সে যোগ করবেন</div></div>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><span class="card-title">পেমেন্ট পদ্ধতি বেছে নিন</span></div>
+      <div class="payment-tabs">
+        <div class="pay-tab active" onclick="selectMethod('bkash', this)">
+          <div class="pay-icon">🩷</div><div class="pay-name">bKash</div>
+        </div>
+        <div class="pay-tab" onclick="selectMethod('nagad', this)">
+          <div class="pay-icon">🧡</div><div class="pay-name">Nagad</div>
+        </div>
+        <div class="pay-tab" onclick="selectMethod('rocket', this)">
+          <div class="pay-icon">🚀</div><div class="pay-name">Rocket</div>
+        </div>
+      </div>
+
+      <!-- Payment Info Box -->
+      <div class="info-box">
+        <div class="info-box-title" id="methodTitle">bKash-এ পাঠান</div>
+        <div class="info-row">
+          <span class="info-key">নম্বর</span>
+          <span class="info-val">
+            <span id="payNumber">01XXXXXXXXX</span>
+            <span class="material-symbols-outlined copy-btn" onclick="copyNumber()" title="কপি করুন">content_copy</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">ধরন</span>
+          <span class="info-val" id="payType">Personal (Send Money)</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">সর্বনিম্ন ডিপোজিট</span>
+          <span class="info-val" style="color:var(--primary)">৳১০০</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deposit Form -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">ডিপোজিট ফর্ম পূরণ করুন</span></div>
+
+      <div class="form-group">
+        <label class="form-label">পরিমাণ (টাকা)</label>
+        <div class="amount-presets">
+          <div class="preset" onclick="setAmount(500)">৳৫০০</div>
+          <div class="preset" onclick="setAmount(1000)">৳১,০০০</div>
+          <div class="preset" onclick="setAmount(5000)">৳৫,০০০</div>
+          <div class="preset" onclick="setAmount(10000)">৳১০,০০০</div>
+          <div class="preset" onclick="setAmount(50000)">৳৫০,০০০</div>
+        </div>
+        <input type="number" id="amount" class="form-input" placeholder="পরিমাণ লিখুন (সর্বনিম্ন ১০০)" min="100"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">আপনার পাঠানো নম্বর</label>
+        <input type="text" id="senderNumber" class="form-input" placeholder="যে নম্বর থেকে পাঠিয়েছেন (01XXXXXXXXX)"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ট্র্যানজেকশন আইডি (TrxID)</label>
+        <input type="text" id="trxId" class="form-input" placeholder="bKash/Nagad TrxID যেমন: 8A8F3G9H2K"/>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="depositBtn" onclick="submitDeposit()">
+        <span class="material-symbols-outlined">payments</span>
+        ডিপোজিট জমা দিন
+      </button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+const paymentMethods = {
+  bkash: { number: '01XXXXXXXXX', title: 'bKash-এ পাঠান', type: 'Personal (Send Money)' },
+  nagad: { number: '01XXXXXXXXX', title: 'Nagad-এ পাঠান', type: 'Personal (Send Money)' },
+  rocket: { number: '01XXXXXXXXX', title: 'Rocket-এ পাঠান', type: 'Personal (Send Money)' }
+};
+// ⚠️ এখানে আপনার আসল নম্বর দিন .env বা admin settings থেকে
+
+let selectedMethod = 'bkash';
+
+function selectMethod(method, el) {
+  selectedMethod = method;
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const m = paymentMethods[method];
+  document.getElementById('methodTitle').textContent = m.title;
+  document.getElementById('payNumber').textContent = m.number;
+  document.getElementById('payType').textContent = m.type;
+}
+
+function copyNumber() {
+  const num = document.getElementById('payNumber').textContent;
+  navigator.clipboard.writeText(num).then(() => showToast('নম্বর কপি হয়েছে!', 'success'));
+}
+
+function setAmount(v) {
+  document.getElementById('amount').value = v;
+  document.querySelectorAll('.preset').forEach(p => p.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+async function submitDeposit() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const senderNumber = document.getElementById('senderNumber').value.trim();
+  const transactionId = document.getElementById('trxId').value.trim();
+
+  if (!amount || amount < 100) return showToast('সর্বনিম্ন ডিপোজিট ১০০ টাকা।', 'error');
+  if (!senderNumber) return showToast('আপনার পাঠানো নম্বর দিন।', 'error');
+  if (!transactionId) return showToast('ট্র্যানজেকশন আইডি দিন।', 'error');
+
+  const btn = document.getElementById('depositBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> প্রসেস হচ্ছে...';
+
+  const data = await apiFetch('/transaction/deposit', {
+    method: 'POST',
+    body: { amount, paymentMethod: selectedMethod, senderNumber, transactionId }
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = '<span class="material-symbols-outlined">payments</span> ডিপোজিট জমা দিন';
+
+  if (data?.success) {
+    showToast(data.message, 'success');
+    document.getElementById('amount').value = '';
+    document.getElementById('senderNumber').value = '';
+    document.getElementById('trxId').value = '';
+    setTimeout(() => window.location.href = 'transactions.html', 2000);
+  } else {
+    showToast(data?.message || 'কিছু সমস্যা হয়েছে।', 'error');
+  }
+}
+</script>
+</body>
+</html>

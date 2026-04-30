@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>লেনদেন - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.filter-btn { padding:7px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; color:var(--text3); transition:all .15s; white-space:nowrap; }
+.filter-btn:hover { border-color:var(--border2); color:var(--text2); }
+.filter-btn.active { background:var(--primary-glow); border-color:var(--primary); color:var(--primary); }
+
+.txn-row { display:flex; align-items:center; gap:12px; padding:14px; border-radius:12px; background:var(--surface); border:1px solid var(--border); margin-bottom:8px; transition:.15s; }
+.txn-row:hover { border-color:var(--border2); }
+.txn-ico { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.txn-main { flex:1; min-width:0; }
+.txn-type { font-size:13px; font-weight:700; color:var(--text); }
+.txn-meta { font-size:10px; color:var(--text3); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; }
+.txn-right { text-align:right; flex-shrink:0; }
+.txn-amt { font-size:14px; font-weight:800; }
+.txn-receipt { font-size:9px; color:var(--text3); margin-top:3px; }
+
+.pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:20px; }
+.page-btn { width:34px; height:34px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:.15s; }
+.page-btn:hover, .page-btn.active { background:var(--primary-glow); border-color:var(--primary); color:var(--primary); }
+.page-btn:disabled { opacity:.4; cursor:not-allowed; }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">💰</div><div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div></div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item active" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">🧾 লেনদেন ইতিহাস</div>
+      <div class="topbar-sub">আপনার সব লেনদেনের তালিকা</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="filter-bar">
+      <div class="filter-btn active" onclick="setFilter('',this)">সব</div>
+      <div class="filter-btn" onclick="setFilter('deposit',this)">💰 ডিপোজিট</div>
+      <div class="filter-btn" onclick="setFilter('withdraw',this)">💸 উইথড্র</div>
+      <div class="filter-btn" onclick="setFilter('profit',this)">📈 মুনাফা</div>
+      <div class="filter-btn" onclick="setFilter('investment',this)">🏦 বিনিয়োগ</div>
+    </div>
+
+    <div id="txnContainer">
+      <div style="text-align:center;padding:50px;color:var(--text3)"><div class="spinner"></div><p style="margin-top:12px">লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+let currentFilter = '';
+let currentPage = 1;
+const LIMIT = 15;
+
+async function loadTransactions() {
+  const el = document.getElementById('txnContainer');
+  el.innerHTML = '<div style="text-align:center;padding:50px;color:var(--text3)"><div class="spinner"></div></div>';
+
+  let url = `/transaction/history?page=${currentPage}&limit=${LIMIT}`;
+  if (currentFilter) url += `&type=${currentFilter}`;
+
+  const data = await apiFetch(url);
+  if (!data?.success) { el.innerHTML = '<div class="empty-state"><p>লেনদেন লোড করা যায়নি।</p></div>'; return; }
+
+  if (!data.transactions.length) {
+    el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><p>কোনো লেনদেন নেই</p></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  const icons = { deposit:'💰', withdraw:'💸', profit:'📈', investment:'🏦', referral:'🎁', refund:'↩️' };
+  const colors = { deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', investment:'var(--blue-dim)', referral:'var(--gold-dim)', refund:'var(--surface3)' };
+  const isPos = t => ['deposit','profit','referral','refund'].includes(t);
+
+  el.innerHTML = data.transactions.map(t => `
+    <div class="txn-row">
+      <div class="txn-ico" style="background:${colors[t.type]||'var(--surface3)'}">${icons[t.type]||'💳'}</div>
+      <div class="txn-main">
+        <div class="txn-type">${typeLabel(t.type)} ${t.planName ? '· '+t.planName : ''}</div>
+        <div class="txn-meta">
+          <span>${formatDateTime(t.createdAt)}</span>
+          ${statusBadge(t.status)}
+          ${t.transactionId ? `<span>TrxID: ${t.transactionId}</span>` : ''}
+          ${t.paymentMethod !== 'system' ? `<span style="text-transform:uppercase">${t.paymentMethod}</span>` : ''}
+        </div>
+        ${t.adminNote ? `<div style="font-size:10px;color:var(--text3);margin-top:3px">📝 ${t.adminNote}</div>` : ''}
+      </div>
+      <div class="txn-right">
+        <div class="txn-amt" style="color:${isPos(t.type)?'var(--primary)':'var(--red)'}">
+          ${isPos(t.type)?'+':'-'}${formatBDTEn(t.amount)}
+        </div>
+        <div class="txn-receipt">${t.receiptNo || ''}</div>
+      </div>
+    </div>
+  `).join('');
+
+  renderPagination(data.pagination);
+}
+
+function renderPagination(pg) {
+  const el = document.getElementById('pagination');
+  if (!pg || pg.pages <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= pg.pages; i++) {
+    if (i === 1 || i === pg.pages || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="color:var(--text3);padding:0 4px">...</span>`;
+    }
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pg.pages?'disabled':''}>›</button>`;
+  el.innerHTML = html;
+}
+
+function goPage(p) { if (p < 1) return; currentPage = p; loadTransactions(); window.scrollTo(0,0); }
+
+function setFilter(f, el) {
+  currentFilter = f; currentPage = 1;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadTransactions();
+}
+
+loadTransactions();
+</script>
+</body>
+</html>

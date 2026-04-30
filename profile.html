@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>প্রোফাইল - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.profile-header {
+  display:flex; align-items:center; gap:18px;
+  padding:22px; background:var(--surface);
+  border:1px solid var(--border); border-radius:16px; margin-bottom:20px;
+}
+.profile-avatar {
+  width:64px; height:64px; border-radius:16px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dim));
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; font-weight:800; color:white; flex-shrink:0;
+}
+.profile-name { font-size:18px; font-weight:800; color:var(--text); }
+.profile-mobile { font-size:12px; color:var(--text3); margin-top:3px; }
+.verified-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  background:var(--primary-glow); color:var(--primary);
+  font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; margin-top:6px;
+}
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+.stat-mini { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
+.stat-mini-val { font-size:16px; font-weight:800; color:var(--primary); }
+.stat-mini-label { font-size:10px; color:var(--text3); margin-top:3px; font-weight:600; }
+.section-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px; }
+.section-title { font-size:13px; font-weight:800; color:var(--text); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.referral-box {
+  background:linear-gradient(135deg,rgba(26,158,46,0.1),rgba(26,158,46,0.05));
+  border:1px solid rgba(26,158,46,0.2); border-radius:12px; padding:16px; text-align:center;
+}
+.ref-code { font-size:22px; font-weight:800; color:var(--primary); letter-spacing:3px; margin:8px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:700px){ .two-col{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr 1fr;} }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">💰</div><div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div></div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item active" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">👤 আমার প্রোফাইল</div>
+      <div class="topbar-sub">আপনার তথ্য ও সেটিংস</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content" style="max-width:720px">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div>
+        <div class="profile-name" id="profileName">লোড হচ্ছে...</div>
+        <div class="profile-mobile" id="profileMobile">—</div>
+        <div class="verified-badge" id="verifiedBadge" style="display:none">
+          <span class="material-symbols-outlined" style="font-size:12px">verified</span> যাচাইকৃত
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:5px" id="memberSince">সদস্য হয়েছেন: —</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-mini">
+        <div class="stat-mini-val" id="pStatDeposit">৳০</div>
+        <div class="stat-mini-label">মোট ডিপোজিট</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-val" id="pStatProfit">৳০</div>
+        <div class="stat-mini-label">মোট মুনাফা</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-val" id="pStatWithdraw">৳০</div>
+        <div class="stat-mini-label">মোট উইথড্র</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- Edit Profile -->
+      <div class="section-card">
+        <div class="section-title"><span class="material-symbols-outlined">edit</span> প্রোফাইল সম্পাদনা</div>
+        <div class="form-group">
+          <label class="form-label">পূর্ণ নাম</label>
+          <input type="text" id="editName" class="form-input" placeholder="আপনার নাম"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">bKash নম্বর</label>
+          <input type="text" id="editBkash" class="form-input" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nagad নম্বর</label>
+          <input type="text" id="editNagad" class="form-input" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">NID নম্বর</label>
+          <input type="text" id="editNid" class="form-input" placeholder="জাতীয় পরিচয়পত্র নম্বর"/>
+        </div>
+        <button class="btn btn-primary btn-full" id="saveProfileBtn" onclick="saveProfile()">
+          <span class="material-symbols-outlined">save</span> সংরক্ষণ করুন
+        </button>
+      </div>
+
+      <!-- Password Change -->
+      <div>
+        <div class="section-card" style="margin-bottom:16px">
+          <div class="section-title"><span class="material-symbols-outlined">lock</span> পাসওয়ার্ড পরিবর্তন</div>
+          <div class="form-group">
+            <label class="form-label">বর্তমান পাসওয়ার্ড</label>
+            <input type="password" id="currentPass" class="form-input" placeholder="বর্তমান পাসওয়ার্ড"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">নতুন পাসওয়ার্ড</label>
+            <input type="password" id="newPass" class="form-input" placeholder="নতুন পাসওয়ার্ড (সর্বনিম্ন ৬ অক্ষর)"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">নতুন পাসওয়ার্ড নিশ্চিত করুন</label>
+            <input type="password" id="confirmPass" class="form-input" placeholder="আবার লিখুন"/>
+          </div>
+          <button class="btn btn-secondary btn-full" id="changePassBtn" onclick="changePassword()">
+            <span class="material-symbols-outlined">lock_reset</span> পাসওয়ার্ড পরিবর্তন করুন
+          </button>
+        </div>
+
+        <!-- Referral -->
+        <div class="section-card">
+          <div class="section-title"><span class="material-symbols-outlined">share</span> রেফারেল কোড</div>
+          <div class="referral-box">
+            <div style="font-size:11px;color:var(--text3)">আপনার রেফারেল কোড</div>
+            <div class="ref-code" id="refCode">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:12px">বন্ধুদের শেয়ার করুন</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="copyRef()">কোড কপি</button>
+              <button class="btn btn-primary btn-sm" style="flex:1" onclick="shareLink()">লিংক শেয়ার</button>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--surface2);border-radius:8px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:4px">রেফারেল আয়</div>
+            <div style="font-size:16px;font-weight:800;color:var(--gold)" id="refEarnings">৳০</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Button -->
+    <div class="section-card" style="text-align:center">
+      <button class="btn btn-danger" onclick="if(confirm('লগআউট করবেন?')) logout()">
+        <span class="material-symbols-outlined">logout</span> লগআউট করুন
+      </button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+async function loadProfile() {
+  const user = await refreshUser();
+  if (!user) return;
+
+  document.getElementById('profileAvatar').textContent = user.name?.charAt(0).toUpperCase() || '?';
+  document.getElementById('profileName').textContent = user.name || '—';
+  document.getElementById('profileMobile').textContent = user.mobile || '—';
+  document.getElementById('memberSince').textContent = 'সদস্য হয়েছেন: ' + formatDate(user.createdAt);
+  document.getElementById('pStatDeposit').textContent = formatBDTEn(user.totalDeposit);
+  document.getElementById('pStatProfit').textContent = formatBDTEn(user.totalProfit);
+  document.getElementById('pStatWithdraw').textContent = formatBDTEn(user.totalWithdraw);
+  document.getElementById('refCode').textContent = user.referralCode || '—';
+  document.getElementById('refEarnings').textContent = formatBDTEn(user.referralEarnings);
+  if (user.isVerified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
+
+  // Pre-fill form
+  document.getElementById('editName').value = user.name || '';
+  document.getElementById('editBkash').value = user.bkashNumber || '';
+  document.getElementById('editNagad').value = user.nagadNumber || '';
+  document.getElementById('editNid').value = user.nidNumber || '';
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('saveProfileBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> সংরক্ষণ হচ্ছে...';
+
+  const data = await apiFetch('/auth/profile', {
+    method: 'PUT',
+    body: {
+      name: document.getElementById('editName').value.trim(),
+      bkashNumber: document.getElementById('editBkash').value.trim(),
+      nagadNumber: document.getElementById('editNagad').value.trim(),
+      nidNumber: document.getElementById('editNid').value.trim()
+    }
+  });
+
+  btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">save</span> সংরক্ষণ করুন';
+  if (data?.success) {
+    showToast(data.message, 'success');
+    loadProfile();
+  } else {
+    showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
+  }
+}
+
+async function changePassword() {
+  const currentPass = document.getElementById('currentPass').value;
+  const newPass = document.getElementById('newPass').value;
+  const confirmPass = document.getElementById('confirmPass').value;
+
+  if (!currentPass || !newPass) return showToast('সব ঘর পূরণ করুন।', 'error');
+  if (newPass.length < 6) return showToast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।', 'error');
+  if (newPass !== confirmPass) return showToast('নতুন পাসওয়ার্ড মিলছে না।', 'error');
+
+  const btn = document.getElementById('changePassBtn');
+  btn.disabled = true; btn.textContent = 'প্রসেস হচ্ছে...';
+
+  const data = await apiFetch('/auth/change-password', { method: 'PUT', body: { currentPassword: currentPass, newPassword: newPass } });
+
+  btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">lock_reset</span> পাসওয়ার্ড পরিবর্তন করুন';
+  if (data?.success) {
+    showToast(data.message, 'success');
+    document.getElementById('currentPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+  } else {
+    showToast(data?.message || 'পাসওয়ার্ড পরিবর্তন ব্যর্থ।', 'error');
+  }
+}
+
+function copyRef() {
+  const code = document.getElementById('refCode').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('রেফারেল কোড কপি হয়েছে!', 'success'));
+}
+
+function shareLink() {
+  const code = document.getElementById('refCode').textContent;
+  const link = `${window.location.origin}/signup.html?ref=${code}`;
+  if (navigator.share) {
+    navigator.share({ title: 'বিনিয়োগ অ্যাপ', text: `আমার রেফারেল কোড দিয়ে সাইন আপ করুন: ${code}`, url: link });
+  } else {
+    navigator.clipboard.writeText(link).then(() => showToast('রেফারেল লিংক কপি হয়েছে!', 'success'));
+  }
+}
+
+loadProfile();
+</script>
+</body>
+</html>

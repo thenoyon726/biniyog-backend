@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>উইথড্র - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.balance-display {
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border:1px solid var(--border2); border-radius:14px;
+  padding:20px; margin-bottom:20px; text-align:center;
+}
+.balance-display .label { font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
+.balance-display .amount { font-size:28px; font-weight:800; color:var(--primary); margin:6px 0; }
+.balance-display .sub { font-size:11px; color:var(--text3); }
+
+.pay-tab { flex:1; min-width:80px; padding:12px 8px; background:var(--surface2); border:2px solid var(--border); border-radius:12px; cursor:pointer; text-align:center; transition:all 0.15s; }
+.pay-tab:hover { border-color:var(--border2); }
+.pay-tab.active { border-color:var(--primary); background:var(--primary-glow); }
+.pay-tab .pay-icon { font-size:22px; margin-bottom:4px; }
+.pay-tab .pay-name { font-size:11px; font-weight:700; color:var(--text2); }
+.pay-tab.active .pay-name { color:var(--primary); }
+
+.amount-presets { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.preset { padding:6px 14px; background:var(--surface2); border:1px solid var(--border2); border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; color:var(--text2); transition:all 0.15s; }
+.preset:hover, .preset.selected { background:var(--red-dim); border-color:var(--red); color:var(--red); }
+
+.warning-box { background:rgba(253,192,3,0.08); border:1px solid rgba(253,192,3,0.2); border-radius:12px; padding:14px; margin-bottom:20px; font-size:12px; color:rgba(253,192,3,0.9); line-height:1.6; }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">💰</div>
+    <div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item active" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">💸 উইথড্র করুন</div>
+      <div class="topbar-sub">আপনার ব্যালেন্স তুলে নিন</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content" style="max-width:600px">
+    <!-- Balance Display -->
+    <div class="balance-display">
+      <div class="label">উপলব্ধ ব্যালেন্স</div>
+      <div class="amount" id="availableBalance">লোড হচ্ছে...</div>
+      <div class="sub">সর্বনিম্ন উইথড্র ৳৫০০</div>
+    </div>
+
+    <!-- Warning -->
+    <div class="warning-box">
+      ⚠️ উইথড্র আবেদন করার পর ব্যালেন্স হোল্ড হবে। অ্যাডমিন যাচাই করে ২৪-৪৮ ঘণ্টার মধ্যে আপনার নম্বরে পাঠাবেন।
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">উইথড্র করুন</span></div>
+
+      <!-- Method -->
+      <div class="form-group">
+        <label class="form-label">পেমেন্ট পদ্ধতি</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="pay-tab active" onclick="selectMethod('bkash',this)"><div class="pay-icon">🩷</div><div class="pay-name">bKash</div></div>
+          <div class="pay-tab" onclick="selectMethod('nagad',this)"><div class="pay-icon">🧡</div><div class="pay-name">Nagad</div></div>
+          <div class="pay-tab" onclick="selectMethod('rocket',this)"><div class="pay-icon">🚀</div><div class="pay-name">Rocket</div></div>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="form-group">
+        <label class="form-label">পরিমাণ (টাকা)</label>
+        <div class="amount-presets">
+          <div class="preset" onclick="setAmount(500,this)">৳৫০০</div>
+          <div class="preset" onclick="setAmount(1000,this)">৳১,০০০</div>
+          <div class="preset" onclick="setAmount(5000,this)">৳৫,০০০</div>
+          <div class="preset" onclick="setAmount(10000,this)">৳১০,০০০</div>
+        </div>
+        <input type="number" id="amount" class="form-input" placeholder="পরিমাণ লিখুন (সর্বনিম্ন ৫০০)" min="500"/>
+      </div>
+
+      <!-- Recipient -->
+      <div class="form-group">
+        <label class="form-label">প্রাপকের নম্বর (যেখানে টাকা পাঠাতে চান)</label>
+        <input type="text" id="recipientNumber" class="form-input" placeholder="01XXXXXXXXX" id="recipientNumber"/>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">আপনার প্রোফাইলে সেভ করা নম্বর: <span id="savedNumber" style="color:var(--primary);cursor:pointer" onclick="useSavedNumber()">—</span></div>
+      </div>
+
+      <button class="btn btn-danger btn-full" id="withdrawBtn" onclick="submitWithdraw()" style="background:var(--red);color:white">
+        <span class="material-symbols-outlined">account_balance_wallet</span>
+        উইথড্র আবেদন করুন
+      </button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+let selectedMethod = 'bkash';
+let userBalance = 0;
+
+async function loadBalance() {
+  const user = await refreshUser();
+  if (user) {
+    userBalance = user.balance || 0;
+    document.getElementById('availableBalance').textContent = formatBDTEn(userBalance);
+    // Pre-fill saved number
+    const num = user.bkashNumber || user.nagadNumber || null;
+    if (num) document.getElementById('savedNumber').textContent = num;
+  }
+}
+loadBalance();
+
+function selectMethod(method, el) {
+  selectedMethod = method;
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const user = getUser();
+  const map = { bkash: user.bkashNumber, nagad: user.nagadNumber, rocket: user.nagadNumber };
+  const num = map[method];
+  document.getElementById('savedNumber').textContent = num || '—';
+}
+
+function setAmount(v, el) {
+  document.getElementById('amount').value = v;
+  document.querySelectorAll('.preset').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function useSavedNumber() {
+  const num = document.getElementById('savedNumber').textContent;
+  if (num && num !== '—') document.getElementById('recipientNumber').value = num;
+}
+
+async function submitWithdraw() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const senderNumber = document.getElementById('recipientNumber').value.trim();
+
+  if (!amount || amount < 500) return showToast('সর্বনিম্ন উইথড্র ৫০০ টাকা।', 'error');
+  if (amount > userBalance) return showToast('পর্যাপ্ত ব্যালেন্স নেই।', 'error');
+  if (!senderNumber) return showToast('প্রাপকের নম্বর দিন।', 'error');
+
+  if (!confirm(`আপনি কি ${formatBDTEn(amount)} উইথড্র করতে চান?`)) return;
+
+  const btn = document.getElementById('withdrawBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> প্রসেস হচ্ছে...';
+
+  const data = await apiFetch('/transaction/withdraw', {
+    method: 'POST',
+    body: { amount, paymentMethod: selectedMethod, senderNumber }
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = '<span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র আবেদন করুন';
+
+  if (data?.success) {
+    showToast(data.message, 'success');
+    setTimeout(() => window.location.href = 'transactions.html', 2000);
+  } else {
+    showToast(data?.message || 'কিছু সমস্যা হয়েছে।', 'error');
+  }
+}
+</script>
+</body>
+</html>

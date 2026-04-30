@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ড্যাশবোর্ড - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.balance-card {
+  background: linear-gradient(135deg, #0d631b 0%, #1a9e2e 50%, #2dbe45 100%);
+  border-radius: 16px; padding: 24px;
+  position: relative; overflow: hidden; margin-bottom: 8px;
+}
+.balance-card::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.balance-card::after {
+  content: '';
+  position: absolute; bottom: -60px; right: 60px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.balance-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+.balance-amount { font-size: 32px; font-weight: 800; color: white; letter-spacing: -1px; }
+.balance-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+.balance-actions { display: flex; gap: 10px; margin-top: 20px; position: relative; z-index: 1; }
+.bal-btn {
+  flex: 1; padding: 10px 12px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px; color: white;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.15s;
+}
+.bal-btn:hover { background: rgba(255,255,255,0.25); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px;
+}
+.stat-icon { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.stat-val { font-size: 18px; font-weight: 800; color: var(--text); }
+.stat-change { font-size: 10px; color: var(--primary); font-weight: 600; margin-top: 3px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.txn-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.txn-item:last-child { border-bottom: none; }
+.txn-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.txn-info { flex: 1; min-width: 0; }
+.txn-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.txn-date { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.txn-amount { font-size: 13px; font-weight: 800; }
+.txn-amount.positive { color: var(--primary); }
+.txn-amount.negative { color: var(--red); }
+
+.inv-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.inv-item:last-child { border-bottom: none; }
+.inv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.inv-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.inv-amount { font-size: 12px; font-weight: 700; color: var(--primary); }
+.progress-bar { height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-dim), var(--primary)); border-radius: 4px; transition: width 0.5s ease; }
+.inv-footer { display: flex; justify-content: space-between; margin-top: 6px; }
+.inv-meta { font-size: 10px; color: var(--text3); }
+
+.greeting { margin-bottom: 20px; }
+.greeting-title { font-size: 20px; font-weight: 800; color: var(--text); }
+.greeting-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr 1fr; } .balance-amount { font-size: 26px; } }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">💰</div>
+    <div>
+      <div class="logo-text">বিনিয়োগ</div>
+      <div class="logo-sub">Investment Platform</div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড
+      </a>
+      <a class="nav-item" href="deposit.html">
+        <span class="material-symbols-outlined">payments</span> ডিপোজিট
+      </a>
+      <a class="nav-item" href="withdraw.html">
+        <span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র
+      </a>
+      <a class="nav-item" href="plans.html">
+        <span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান
+      </a>
+      <a class="nav-item" href="transactions.html">
+        <span class="material-symbols-outlined">receipt_long</span> লেনদেন
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html">
+        <span class="material-symbols-outlined">notifications</span> নোটিফিকেশন
+        <span class="nav-badge" id="navNotifBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" href="profile.html">
+        <span class="material-symbols-outlined">person</span> প্রোফাইল
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">লোড হচ্ছে...</div>
+        <div class="user-role" id="sidebarRole">সদস্য</div>
+      </div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()" title="লগআউট">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Main -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="greetingTitle">শুভ সকাল! 👋</div>
+      <div class="topbar-sub" id="greetingDate">আজকের তারিখ</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html">
+        <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
+        <span class="badge notif-badge" style="display:none">0</span>
+      </a>
+      <a class="icon-btn" href="profile.html">
+        <span class="material-symbols-outlined" style="font-size:18px">person</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Balance Card -->
+    <div class="balance-card">
+      <div class="balance-label">মোট ব্যালেন্স</div>
+      <div class="balance-amount" id="balanceAmount">৳ লোড হচ্ছে...</div>
+      <div class="balance-sub" id="balanceSub">আপনার বর্তমান ব্যালেন্স</div>
+      <div class="balance-actions" style="position:relative;z-index:1">
+        <a class="bal-btn" href="deposit.html">
+          <span class="material-symbols-outlined" style="font-size:16px">add</span> ডিপোজিট
+        </a>
+        <a class="bal-btn" href="withdraw.html">
+          <span class="material-symbols-outlined" style="font-size:16px">remove</span> উইথড্র
+        </a>
+        <a class="bal-btn" href="plans.html">
+          <span class="material-symbols-outlined" style="font-size:16px">trending_up</span> বিনিয়োগ
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">মোট ডিপোজিট</div>
+        <div class="stat-val" id="statDeposit">৳০</div>
+        <div class="stat-change">সব মিলিয়ে</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">মোট মুনাফা</div>
+        <div class="stat-val" id="statProfit">৳০</div>
+        <div class="stat-change" style="color:var(--primary)">এখন পর্যন্ত</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">মোট উইথড্র</div>
+        <div class="stat-val" id="statWithdraw">৳০</div>
+        <div class="stat-change">সব মিলিয়ে</div>
+      </div>
+    </div>
+
+    <!-- Two Column -->
+    <div class="two-col">
+      <!-- Recent Transactions -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">সাম্প্রতিক লেনদেন</span>
+          <a class="card-link" href="transactions.html">সব দেখুন →</a>
+        </div>
+        <div id="txnList">
+          <div style="text-align:center;padding:30px;color:var(--text3)"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Active Investments -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">সক্রিয় বিনিয়োগ</span>
+          <a class="card-link" href="plans.html">বিনিয়োগ করুন →</a>
+        </div>
+        <div id="invList">
+          <div style="text-align:center;padding:30px;color:var(--text3)"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral Card -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">
+        <span class="card-title">🎁 রেফারেল প্রোগ্রাম</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">বন্ধুদের রেফার করুন এবং প্রতিটি ডিপোজিটের উপর বোনাস আয় করুন!</p>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--primary);letter-spacing:1px" id="referralCodeEl">লোড হচ্ছে...</div>
+        <button class="btn btn-secondary btn-sm" onclick="copyReferral()">কপি করুন</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<!-- Mobile Toggle -->
+<button class="menu-toggle" onclick="toggleSidebar()">
+  <span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু
+</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+// Greeting
+(function() {
+  const h = new Date().getHours();
+  document.getElementById('greetingTitle').textContent = h < 12 ? 'শুভ সকাল! 👋' : h < 17 ? 'শুভ বিকাল! 👋' : 'শুভ সন্ধ্যা! 👋';
+  document.getElementById('greetingDate').textContent = new Date().toLocaleDateString('bn-BD', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+})();
+
+// Load user data
+async function loadDashboard() {
+  const user = await refreshUser();
+  if (!user) return;
+
+  document.getElementById('balanceAmount').textContent = formatBDTEn(user.balance);
+  document.getElementById('balanceSub').textContent = `রেফারেল কোড: ${user.referralCode || '—'}`;
+  document.getElementById('statDeposit').textContent = formatBDTEn(user.totalDeposit);
+  document.getElementById('statProfit').textContent = formatBDTEn(user.totalProfit);
+  document.getElementById('statWithdraw').textContent = formatBDTEn(user.totalWithdraw);
+  document.getElementById('referralCodeEl').textContent = user.referralCode || '—';
+}
+
+// Load transactions
+async function loadTransactions() {
+  const data = await apiFetch('/transaction/history?limit=5');
+  const el = document.getElementById('txnList');
+  if (!data?.success || data.transactions.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><p>কোনো লেনদেন নেই</p></div>';
+    return;
+  }
+  el.innerHTML = data.transactions.map(t => {
+    const isPositive = ['deposit','profit','referral','refund'].includes(t.type);
+    const icons = { deposit:'💰', withdraw:'💸', profit:'📈', investment:'🏦', referral:'🎁', refund:'↩️' };
+    const colors = { deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', investment:'var(--blue-dim)', referral:'var(--gold-dim)', refund:'var(--surface3)' };
+    return `<div class="txn-item">
+      <div class="txn-icon" style="background:${colors[t.type]||'var(--surface3)'}">${icons[t.type]||'💳'}</div>
+      <div class="txn-info">
+        <div class="txn-name">${typeLabel(t.type)}</div>
+        <div class="txn-date">${formatDateTime(t.createdAt)} · ${statusBadge(t.status)}</div>
+      </div>
+      <div class="txn-amount ${isPositive?'positive':'negative'}">${isPositive?'+':'-'}${formatBDTEn(t.amount)}</div>
+    </div>`;
+  }).join('');
+}
+
+// Load investments
+async function loadInvestments() {
+  const data = await apiFetch('/plans/my-investments');
+  const el = document.getElementById('invList');
+  if (!data?.success || data.investments.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">trending_up</span><p>কোনো সক্রিয় বিনিয়োগ নেই</p><a href="plans.html" class="btn btn-primary btn-sm" style="margin-top:10px">এখনই বিনিয়োগ করুন</a></div>';
+    return;
+  }
+  const active = data.investments.filter(i => i.status === 'active').slice(0, 4);
+  if (!active.length) { el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">check_circle</span><p>সব বিনিয়োগ সম্পন্ন হয়েছে</p></div>'; return; }
+  el.innerHTML = active.map(inv => {
+    const progress = Math.min((inv.daysCompleted / inv.durationDays) * 100, 100);
+    const daysLeft = Math.max(inv.durationDays - inv.daysCompleted, 0);
+    return `<div class="inv-item">
+      <div class="inv-header">
+        <span class="inv-name">${inv.planName}</span>
+        <span class="inv-amount">${formatBDTEn(inv.amount)}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+      <div class="inv-footer">
+        <span class="inv-meta">মুনাফা: ${formatBDTEn(inv.profitPaid)}</span>
+        <span class="inv-meta">${daysLeft} দিন বাকি</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyReferral() {
+  const code = document.getElementById('referralCodeEl').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('রেফারেল কোড কপি হয়েছে! 🎉', 'success'));
+}
+
+// Sync nav badge
+document.getElementById('navNotifBadge').addEventListener('DOMContentLoaded', loadNotifCount);
+
+loadDashboard();
+loadTransactions();
+loadInvestments();
+</script>
+</body>
+</html>

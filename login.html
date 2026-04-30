@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>লগইন - বিনিয়োগ অ্যাপ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0d631b", "on-primary": "#ffffff",
+          "primary-container": "#2e7d32", "on-primary-container": "#cbffc2",
+          "primary-fixed": "#a3f69c", "primary-fixed-dim": "#88d982",
+          "inverse-primary": "#88d982",
+          "secondary": "#785900", "on-secondary": "#ffffff",
+          "secondary-container": "#fdc003", "on-secondary-container": "#6c5000",
+          "secondary-fixed": "#ffdf9e", "secondary-fixed-dim": "#fabd00",
+          "tertiary": "#1f6223", "on-tertiary": "#ffffff",
+          "tertiary-container": "#3a7b39", "on-tertiary-container": "#c8ffbf",
+          "tertiary-fixed": "#acf4a4", "tertiary-fixed-dim": "#91d78a",
+          "surface": "#f8faf8", "on-surface": "#191c1b",
+          "surface-variant": "#e1e3e1", "on-surface-variant": "#40493d",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f4f2",
+          "surface-container": "#eceeec",
+          "surface-container-high": "#e6e9e7",
+          "surface-container-highest": "#e1e3e1",
+          "surface-bright": "#f8faf8", "surface-dim": "#d8dad9",
+          "background": "#f8faf8", "on-background": "#191c1b",
+          "outline": "#707a6c", "outline-variant": "#bfcaba",
+          "inverse-surface": "#2e3130", "inverse-on-surface": "#eff1ef",
+          "error": "#ba1a1a", "on-error": "#ffffff",
+          "error-container": "#ffdad6", "on-error-container": "#93000a",
+          "surface-tint": "#1b6d24",
+          "on-primary-fixed": "#002204", "on-primary-fixed-variant": "#005312",
+          "on-secondary-fixed": "#261a00", "on-secondary-fixed-variant": "#5b4300",
+          "on-tertiary-fixed": "#002203", "on-tertiary-fixed-variant": "#0c5216",
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "md": "24px", "sm": "12px", "xs": "4px", "base": "8px", "xl": "80px", "gutter": "24px", "margin": "32px", "lg": "48px" },
+        fontFamily: { "headline-md": ["Manrope"], "display-lg": ["Manrope"], "body-md": ["Manrope"], "body-sm": ["Manrope"], "label-bold": ["Manrope"], "title-sm": ["Manrope"] },
+        fontSize: {
+          "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+          "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+          "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+          "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "title-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { background-color: #f8faf8; font-family: 'Manrope', sans-serif; }
+  .login-card-shadow { box-shadow: 0px 4px 20px rgba(46, 125, 50, 0.05); }
+  .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .toast { position: fixed; top: 24px; right: 24px; z-index: 1000; min-width: 280px; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; }
+  .toast-success { background: #0d631b; color: white; }
+  .toast-error { background: #ba1a1a; color: white; }
+  @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .btn-loading { opacity: 0.7; pointer-events: none; cursor: not-allowed; }
+</style>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden"></div>
+
+<main class="flex-grow flex items-center justify-center px-gutter py-xl relative overflow-hidden">
+  <!-- Abstract Background Elements -->
+  <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-fixed/20 rounded-full blur-[100px]"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary-fixed/20 rounded-full blur-[100px]"></div>
+
+  <div class="w-full max-w-[1200px] grid lg:grid-cols-2 gap-xl items-center relative z-10">
+    <!-- Left Side: Branding -->
+    <div class="hidden lg:flex flex-col space-y-md">
+      <div class="flex items-center space-x-sm mb-base">
+        <span class="material-symbols-outlined text-primary text-[48px]">account_balance</span>
+        <h1 class="font-display-lg text-display-lg text-primary">বিনিয়োগ অ্যাপ</h1>
+      </div>
+      <h2 class="font-headline-md text-headline-md text-on-surface">আপনার ভবিষ্যৎ গড়ার সঠিক মাধ্যম।</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-[480px]">
+        নিরাপদ এবং নির্ভরযোগ্য প্ল্যাটফর্মে আপনার অর্থ বিনিয়োগ করুন এবং দীর্ঘমেয়াদী আর্থিক সমৃদ্ধি অর্জন করুন। আমাদের বিশেষজ্ঞ প্যানেল আপনার পাশে আছে সবসময়।
+      </p>
+      <div class="pt-lg">
+        <img class="rounded-xl login-card-shadow w-full h-[300px] object-cover border border-outline-variant" 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw3IJYcbIsT3GC5LIlw9gLacNObKBp_SsBi8-GhXCJWJoT1mXVaY6PocgZSW7A_UypnabFZwf5KF6GzKZ5ADxxhaD3FL0tLJg6PgAAj8zpvM_pJZ1TdbZn5Wm1hUcqY_EtJzoVgjVtpJIoIuR_YzLrIZBIt68pk6yhzDXDaWVI3Llm-4uis9yUwNmN0gkIb1DKB3KlxlKUfZc_fLvZqnMTNDovyV7lTgS8d4nncoGbY_flhv08rk24FMeM4GgSn74nnuUMzyz0Bg"
+             alt="Investment Building"/>
+      </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="flex justify-center lg:justify-end">
+      <div class="w-full max-w-[440px] bg-surface-container-lowest p-md lg:p-lg rounded-xl login-card-shadow border border-outline-variant glass-effect">
+        <div class="mb-lg">
+          <div class="lg:hidden flex items-center space-x-sm mb-md">
+            <span class="material-symbols-outlined text-primary text-[32px]">account_balance</span>
+            <span class="font-title-sm text-title-sm text-primary font-bold">বিনিয়োগ অ্যাপ</span>
+          </div>
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-xs">ফিরে আসায় স্বাগতম</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">আপনার অ্যাকাউন্টে লগইন করতে নিচের তথ্যগুলো দিন।</p>
+        </div>
+
+        <form id="loginForm" class="space-y-md">
+          <!-- Mobile Number Field -->
+          <div class="space-y-xs">
+            <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider" for="mobile">মোবাইল নম্বর</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline text-[20px]">smartphone</span>
+              <input class="w-full pl-[56px] pr-md py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" 
+                     id="mobile" name="mobile" placeholder="০১৮XXXXXXXX" type="tel" required/>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="space-y-xs">
+            <div class="flex justify-between items-center">
+              <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider" for="password">পাসওয়ার্ড</label>
+              <a class="font-label-bold text-label-bold text-primary hover:underline" href="#">পাসওয়ার্ড ভুলে গেছেন?</a>
+            </div>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+              <input class="w-full pl-[56px] pr-[52px] py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" 
+                     id="password" name="password" placeholder="••••••••" type="password" required/>
+              <button class="absolute right-md top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" type="button" onclick="togglePassword()">
+                <span id="eyeIcon" class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div id="errorMsg" class="hidden bg-error-container text-on-error-container text-body-sm p-sm rounded-lg"></div>
+
+          <!-- Submit Button -->
+          <div class="pt-sm">
+            <button id="loginBtn" class="w-full py-md px-lg bg-primary text-on-primary font-title-sm text-title-sm rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-[0.98] login-card-shadow flex justify-center items-center gap-base" type="submit">
+              <span id="btnText">লগইন করুন</span>
+              <span id="btnIcon" class="material-symbols-outlined">arrow_forward</span>
+              <span id="btnSpinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative my-lg flex items-center">
+          <div class="flex-grow border-t border-outline-variant"></div>
+          <span class="mx-md text-on-surface-variant font-label-bold text-label-bold bg-surface-container-lowest px-sm">অথবা</span>
+          <div class="flex-grow border-t border-outline-variant"></div>
+        </div>
+
+        <!-- Signup Link -->
+        <div class="text-center">
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            আপনার কি কোনো অ্যাকাউন্ট নেই?
+            <a class="text-primary font-title-sm text-[16px] hover:underline ml-xs" href="signup.html">নতুন অ্যাকাউন্ট খুলুন</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="py-md px-gutter border-t border-outline-variant bg-surface-container-low text-center">
+  <p class="font-label-bold text-label-bold text-on-surface-variant">© ২০২৪ বিনিয়োগ অ্যাপ | সকল স্বত্ব সংরক্ষিত।</p>
+</footer>
+
+<script>
+  // ─── Config ───────────────────────────────
+  const API_BASE = 'http://localhost:5000/api'; // Production এ change করো
+
+  // ─── Already logged in? Dashboard এ পাঠাও ──
+  if (localStorage.getItem('biniyog_token')) {
+    window.location.href = 'dashboard.html';
+  }
+
+  // ─── Password Toggle ───────────────────────
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility_off';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility';
+    }
+  }
+
+  // ─── Toast Notification ────────────────────
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span> ${message}`;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 4000);
+  }
+
+  // ─── Login Form Submit ─────────────────────
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const mobile = document.getElementById('mobile').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Validation
+    if (!mobile || !password) {
+      errorMsg.textContent = 'মোবাইল নম্বর এবং পাসওয়ার্ড দিন।';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+
+    // Loading state
+    btn.classList.add('btn-loading');
+    btnText.textContent = 'লগইন হচ্ছে...';
+    btnIcon.classList.add('hidden');
+    btnSpinner.classList.remove('hidden');
+    errorMsg.classList.add('hidden');
+
+    try {
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobile, password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Token ও user info সংরক্ষণ করো
+        localStorage.setItem('biniyog_token', data.token);
+        localStorage.setItem('biniyog_user', JSON.stringify(data.user));
+        showToast(data.message || 'লগইন সফল!', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+      } else {
+        errorMsg.textContent = data.message || 'লগইন ব্যর্থ হয়েছে।';
+        errorMsg.classList.remove('hidden');
+      }
+    } catch (error) {
+      errorMsg.textContent = 'সার্ভারের সাথে সংযোগ হচ্ছে না। আবার চেষ্টা করুন।';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      btn.classList.remove('btn-loading');
+      btnText.textContent = 'লগইন করুন';
+      btnIcon.classList.remove('hidden');
+      btnSpinner.classList.add('hidden');
+    }
+  });
+</script>
+</body>
+</html>

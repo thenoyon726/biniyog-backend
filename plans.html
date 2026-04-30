@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>বিনিয়োগ প্ল্যান - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.plans-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.plan-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:22px;
+  transition:all 0.2s ease; cursor:pointer; position:relative; overflow:hidden;
+}
+.plan-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:0 8px 32px rgba(26,158,46,0.15); }
+.plan-card::before { content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px; border-radius:50%; opacity:0.05; }
+.plan-badge { position:absolute; top:14px; right:14px; padding:3px 10px; border-radius:20px; font-size:10px; font-weight:800; }
+.plan-icon { font-size:36px; margin-bottom:12px; }
+.plan-name { font-size:16px; font-weight:800; color:var(--text); margin-bottom:4px; }
+.plan-desc { font-size:11px; color:var(--text3); margin-bottom:16px; line-height:1.5; }
+.plan-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.plan-stat { background:var(--surface2); border-radius:10px; padding:10px; text-align:center; }
+.plan-stat-val { font-size:15px; font-weight:800; margin-bottom:2px; }
+.plan-stat-label { font-size:9px; color:var(--text3); font-weight:600; letter-spacing:0.5px; }
+.plan-range { font-size:11px; color:var(--text3); text-align:center; margin-bottom:14px; }
+.plan-range span { color:var(--text); font-weight:700; }
+
+.invest-tabs { display:flex; background:var(--surface2); border-radius:10px; padding:3px; margin-bottom:20px; }
+.invest-tab { flex:1; padding:8px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; color:var(--text3); text-align:center; transition:all 0.15s; }
+.invest-tab.active { background:var(--surface); color:var(--text); }
+
+.my-inv-item { display:flex; align-items:center; gap:12px; padding:14px; background:var(--surface2); border-radius:12px; margin-bottom:10px; }
+.inv-icon-box { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.inv-details { flex:1; }
+.inv-plan-name { font-size:13px; font-weight:800; color:var(--text); }
+.inv-progress-wrap { margin-top:6px; }
+.inv-prog-bar { height:5px; background:var(--surface3); border-radius:5px; overflow:hidden; margin-bottom:4px; }
+.inv-prog-fill { height:100%; border-radius:5px; transition:width 0.5s; }
+.inv-prog-text { display:flex; justify-content:space-between; font-size:10px; color:var(--text3); }
+.inv-amount-info { text-align:right; }
+.inv-amount-val { font-size:13px; font-weight:800; color:var(--primary); }
+.inv-profit-val { font-size:10px; color:var(--text3); margin-top:2px; }
+
+@media (max-width:600px) { .plans-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">💰</div>
+    <div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item active" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">📈 বিনিয়োগ প্ল্যান</div>
+      <div class="topbar-sub">আপনার পছন্দের প্ল্যানে বিনিয়োগ করুন</div>
+    </div>
+    <div class="topbar-right">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--primary)">
+        ব্যালেন্স: <span id="userBalanceTop">লোড...</span>
+      </div>
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Tabs -->
+    <div class="invest-tabs">
+      <div class="invest-tab active" onclick="showTab('plans',this)">সব প্ল্যান</div>
+      <div class="invest-tab" onclick="showTab('my',this)">আমার বিনিয়োগ</div>
+    </div>
+
+    <!-- Plans -->
+    <div id="plansSection">
+      <div class="plans-grid" id="plansList">
+        <div style="text-align:center;padding:50px;color:var(--text3);grid-column:1/-1"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- My Investments -->
+    <div id="mySection" style="display:none">
+      <div id="myInvList">
+        <div style="text-align:center;padding:50px;color:var(--text3)"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Invest Modal -->
+<div class="modal-overlay" id="investModal">
+  <div class="modal">
+    <div class="modal-title">💰 বিনিয়োগ করুন</div>
+    <div id="modalPlanInfo" style="background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--text2);"></div>
+    <div class="form-group">
+      <label class="form-label">বিনিয়োগের পরিমাণ</label>
+      <input type="number" id="investAmount" class="form-input" placeholder="পরিমাণ লিখুন"/>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px" id="investRange"></div>
+    </div>
+    <div style="background:var(--primary-glow);border:1px solid rgba(26,158,46,0.2);border-radius:10px;padding:12px;margin-bottom:18px;font-size:12px;display:none" id="profitPreview">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--text3)">প্রত্যাশিত মুনাফা</span><span style="color:var(--primary);font-weight:800" id="previewProfit">—</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">মোট পাবেন</span><span style="color:var(--text);font-weight:800" id="previewTotal">—</span></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal()">বাতিল</button>
+      <button class="btn btn-primary" style="flex:1" id="confirmInvestBtn" onclick="confirmInvest()">বিনিয়োগ নিশ্চিত করুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+let plans = [];
+let selectedPlan = null;
+let userBalance = 0;
+
+async function loadData() {
+  const user = await refreshUser();
+  if (user) {
+    userBalance = user.balance || 0;
+    document.getElementById('userBalanceTop').textContent = formatBDTEn(userBalance);
+  }
+
+  const data = await apiFetch('/plans');
+  if (!data?.success) return;
+  plans = data.plans;
+  renderPlans();
+}
+
+function renderPlans() {
+  const el = document.getElementById('plansList');
+  if (!plans.length) {
+    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span class="material-symbols-outlined">trending_up</span><p>কোনো প্ল্যান পাওয়া যায়নি</p></div>';
+    return;
+  }
+  el.innerHTML = plans.map(p => `
+    <div class="plan-card" onclick="openInvest('${p._id}')">
+      ${p.badge ? `<div class="plan-badge" style="background:rgba(253,192,3,0.15);color:var(--gold)">${p.badge}</div>` : ''}
+      <div class="plan-icon">${p.icon || '💰'}</div>
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-desc">${p.description || ''}</div>
+      <div class="plan-stats">
+        <div class="plan-stat">
+          <div class="plan-stat-val" style="color:${p.color||'var(--primary)'}">${p.totalReturn}%</div>
+          <div class="plan-stat-label">মোট রিটার্ন</div>
+        </div>
+        <div class="plan-stat">
+          <div class="plan-stat-val" style="color:${p.color||'var(--primary)'}">${p.durationDays}</div>
+          <div class="plan-stat-label">দিন মেয়াদ</div>
+        </div>
+        <div class="plan-stat">
+          <div class="plan-stat-val" style="color:${p.color||'var(--primary)'}">${p.returnRate}%</div>
+          <div class="plan-stat-label">দৈনিক রিটার্ন</div>
+        </div>
+        <div class="plan-stat">
+          <div class="plan-stat-val">${p.totalInvestors || 0}</div>
+          <div class="plan-stat-label">বিনিয়োগকারী</div>
+        </div>
+      </div>
+      <div class="plan-range">সীমা: <span>${formatBDTEn(p.minAmount)}</span> – <span>${formatBDTEn(p.maxAmount)}</span></div>
+      <button class="btn btn-primary btn-full" style="font-size:12px;padding:10px">এখনই বিনিয়োগ করুন</button>
+    </div>
+  `).join('');
+}
+
+async function renderMyInvestments() {
+  const data = await apiFetch('/plans/my-investments');
+  const el = document.getElementById('myInvList');
+  if (!data?.success || !data.investments.length) {
+    el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">trending_up</span><p>কোনো বিনিয়োগ নেই। নতুন প্ল্যানে বিনিয়োগ করুন!</p></div>';
+    return;
+  }
+  el.innerHTML = data.investments.map(inv => {
+    const progress = Math.min((inv.daysCompleted / inv.durationDays) * 100, 100);
+    const daysLeft = Math.max(inv.durationDays - inv.daysCompleted, 0);
+    const planColor = inv.plan?.color || 'var(--primary)';
+    return `<div class="my-inv-item">
+      <div class="inv-icon-box" style="background:rgba(26,158,46,0.1)">${inv.plan?.icon || '📈'}</div>
+      <div class="inv-details">
+        <div class="inv-plan-name">${inv.planName}</div>
+        <div style="display:flex;gap:8px;margin-top:3px">${statusBadge(inv.status)}<span style="font-size:10px;color:var(--text3)">${formatDate(inv.startDate)} → ${formatDate(inv.maturityDate)}</span></div>
+        <div class="inv-prog-bar" style="margin-top:8px"><div class="inv-prog-fill" style="width:${progress}%;background:${planColor}"></div></div>
+        <div class="inv-prog-text"><span>মুনাফা: ${formatBDTEn(inv.profitPaid)}</span><span>${daysLeft} দিন বাকি</span></div>
+      </div>
+      <div class="inv-amount-info">
+        <div class="inv-amount-val">${formatBDTEn(inv.amount)}</div>
+        <div class="inv-profit-val">মোট: ${formatBDTEn(inv.totalReturn)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.invest-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('plansSection').style.display = tab === 'plans' ? 'block' : 'none';
+  document.getElementById('mySection').style.display = tab === 'my' ? 'block' : 'none';
+  if (tab === 'my') renderMyInvestments();
+}
+
+function openInvest(planId) {
+  selectedPlan = plans.find(p => p._id === planId);
+  if (!selectedPlan) return;
+  document.getElementById('modalPlanInfo').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:24px">${selectedPlan.icon}</span>
+      <div><div style="font-size:14px;font-weight:800;color:var(--text)">${selectedPlan.name}</div>
+      <div style="font-size:11px;color:var(--text3)">${selectedPlan.durationDays} দিনে ${selectedPlan.totalReturn}% রিটার্ন</div></div>
+    </div>
+  `;
+  document.getElementById('investRange').textContent = `সীমা: ${formatBDTEn(selectedPlan.minAmount)} – ${formatBDTEn(selectedPlan.maxAmount)} | আপনার ব্যালেন্স: ${formatBDTEn(userBalance)}`;
+  document.getElementById('investAmount').value = '';
+  document.getElementById('profitPreview').style.display = 'none';
+  document.getElementById('investModal').classList.add('open');
+
+  document.getElementById('investAmount').oninput = function() {
+    const amt = parseFloat(this.value);
+    if (!amt) { document.getElementById('profitPreview').style.display = 'none'; return; }
+    const profit = (amt * selectedPlan.totalReturn) / 100;
+    document.getElementById('previewProfit').textContent = formatBDTEn(profit);
+    document.getElementById('previewTotal').textContent = formatBDTEn(amt + profit);
+    document.getElementById('profitPreview').style.display = 'block';
+  };
+}
+
+function closeModal() {
+  document.getElementById('investModal').classList.remove('open');
+}
+
+async function confirmInvest() {
+  const amount = parseFloat(document.getElementById('investAmount').value);
+  if (!amount || isNaN(amount)) return showToast('পরিমাণ দিন।', 'error');
+  if (amount < selectedPlan.minAmount) return showToast(`সর্বনিম্ন ${formatBDTEn(selectedPlan.minAmount)}`, 'error');
+  if (amount > selectedPlan.maxAmount) return showToast(`সর্বোচ্চ ${formatBDTEn(selectedPlan.maxAmount)}`, 'error');
+  if (amount > userBalance) return showToast('পর্যাপ্ত ব্যালেন্স নেই। আগে ডিপোজিট করুন।', 'error');
+
+  const btn = document.getElementById('confirmInvestBtn');
+  btn.disabled = true; btn.textContent = 'প্রসেস হচ্ছে...';
+
+  const data = await apiFetch('/plans/invest', { method:'POST', body:{ planId:selectedPlan._id, amount } });
+
+  btn.disabled = false; btn.textContent = 'বিনিয়োগ নিশ্চিত করুন';
+
+  if (data?.success) {
+    showToast(data.message, 'success');
+    closeModal();
+    userBalance -= amount;
+    document.getElementById('userBalanceTop').textContent = formatBDTEn(userBalance);
+    setTimeout(() => { showTab('my', document.querySelectorAll('.invest-tab')[1]); }, 1000);
+  } else {
+    showToast(data?.message || 'বিনিয়োগ ব্যর্থ হয়েছে।', 'error');
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('investModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+loadData();
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>বিনিয়োগ শুরু করুন - সাইন-আপ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0d631b", "on-primary": "#ffffff",
+          "primary-container": "#2e7d32", "on-primary-container": "#cbffc2",
+          "primary-fixed": "#a3f69c",
+          "secondary": "#785900", "on-secondary": "#ffffff",
+          "secondary-container": "#fdc003", "on-secondary-container": "#6c5000",
+          "tertiary": "#1f6223", "on-tertiary": "#ffffff",
+          "tertiary-container": "#3a7b39", "on-tertiary-container": "#c8ffbf",
+          "surface": "#f8faf8", "on-surface": "#191c1b",
+          "surface-variant": "#e1e3e1", "on-surface-variant": "#40493d",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f4f2",
+          "surface-container": "#eceeec",
+          "surface-container-high": "#e6e9e7",
+          "background": "#f8faf8", "on-background": "#191c1b",
+          "outline": "#707a6c", "outline-variant": "#bfcaba",
+          "error": "#ba1a1a", "on-error": "#ffffff",
+          "error-container": "#ffdad6", "on-error-container": "#93000a",
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "md": "24px", "sm": "12px", "xs": "4px", "base": "8px", "xl": "80px", "gutter": "24px", "margin": "32px", "lg": "48px" },
+        fontFamily: { "headline-md": ["Manrope"], "display-lg": ["Manrope"], "body-md": ["Manrope"], "body-sm": ["Manrope"], "label-bold": ["Manrope"], "title-sm": ["Manrope"] },
+        fontSize: {
+          "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+          "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+          "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+          "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "title-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { font-family: 'Manrope', sans-serif; }
+  .toast { position: fixed; top: 24px; right: 24px; z-index: 1000; min-width: 280px; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; }
+  .toast-success { background: #0d631b; color: white; }
+  .toast-error { background: #ba1a1a; color: white; }
+  @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .btn-loading { opacity: 0.7; pointer-events: none; }
+  .password-strength { height: 4px; border-radius: 4px; transition: all 0.3s; }
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center p-md md:p-lg">
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden"></div>
+
+<div class="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-2 bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_20px_rgba(46,125,50,0.05)] border border-outline-variant">
+
+  <!-- Left Side: Brand -->
+  <div class="relative hidden md:flex flex-col justify-between p-lg bg-primary-container text-on-primary-container">
+    <div class="relative z-10">
+      <div class="flex items-center gap-base mb-lg">
+        <span class="material-symbols-outlined text-4xl">account_balance</span>
+        <h1 class="font-display-lg text-title-sm tracking-tight">বিনিয়োগ অ্যাপ</h1>
+      </div>
+      <h2 class="font-headline-md text-headline-md mb-md leading-tight">আপনার আর্থিক ভবিষ্যতের সঠিক সূচনা এখান থেকেই।</h2>
+      <p class="font-body-md text-body-md opacity-90">নিরাপদ এবং আধুনিক বিনিয়োগ ব্যবস্থার মাধ্যমে আপনার সম্পদ বৃদ্ধি করুন। আজই যোগ দিন আমাদের হাজার হাজার সফল বিনিয়োগকারীর সাথে।</p>
+    </div>
+    <div class="relative z-10 mt-xl">
+      <div class="flex items-center gap-md p-md bg-white/10 backdrop-blur-md rounded-lg border border-white/20">
+        <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-secondary-container">trending_up</span>
+        </div>
+        <div>
+          <p class="font-label-bold text-label-bold uppercase">গড় বার্ষিক বৃদ্ধি</p>
+          <p class="font-title-sm text-title-sm">১২.৫%+</p>
+        </div>
+      </div>
+    </div>
+    <div class="absolute inset-0 z-0 opacity-20">
+      <img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-iUnycA42mEO1gyaSaPzBHPe1svNEuMnHO2VBEXdUYYzoLY1orHpwKD48LqrUIQ-j6UMixnmKuP1-RcWtUmQGFQJ2IM845u4GtMEozuGn5xdDF2MCybICpq8QZPpBWAhYWi-0necZXIa5uupsf70gkZzDRPObfyAZShZsjnVcqsH8cErozHc-DCkq4gHW8lT5hkpkpB0XfcFivMzNkZ7zxJ9smSjC6wSZPydklT4T__glMXOt-RpWN0MjDItayZUlDyfLRsDSbw"/>
+    </div>
+  </div>
+
+  <!-- Right Side: Signup Form -->
+  <div class="p-md md:p-xl flex flex-col justify-center">
+    <div class="mb-lg">
+      <h2 class="font-headline-md text-headline-md text-primary mb-xs">বিনিয়োগ শুরু করুন</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant">নতুন অ্যাকাউন্ট তৈরি করতে নিচের তথ্যগুলো প্রদান করুন</p>
+    </div>
+
+    <form id="signupForm" class="space-y-md">
+      <!-- Name Field -->
+      <div class="space-y-xs">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block">আপনার নাম</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person</span>
+          <input id="name" name="name" class="w-full pl-[52px] pr-md py-md bg-[#F5F7F5] border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="পুরো নাম লিখুন" type="text" required/>
+        </div>
+      </div>
+
+      <!-- Mobile Number Field -->
+      <div class="space-y-xs">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block">মোবাইল নম্বর</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">smartphone</span>
+          <input id="mobile" name="mobile" class="w-full pl-[52px] pr-md py-md bg-[#F5F7F5] border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="০১৭XXXXXXXX" type="tel" required/>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="space-y-xs">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block">পাসওয়ার্ড</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">lock</span>
+          <input id="password" name="password" class="w-full pl-[52px] pr-[52px] py-md bg-[#F5F7F5] border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="নূন্যতম ৮ অক্ষরের পাসওয়ার্ড" type="password" required oninput="checkPasswordStrength(this.value)"/>
+          <span id="eyeIcon" class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline cursor-pointer hover:text-primary transition-colors" onclick="togglePassword()">visibility_off</span>
+        </div>
+        <!-- Password Strength Bar -->
+        <div class="flex gap-xs mt-xs">
+          <div id="strength1" class="flex-1 password-strength bg-outline-variant"></div>
+          <div id="strength2" class="flex-1 password-strength bg-outline-variant"></div>
+          <div id="strength3" class="flex-1 password-strength bg-outline-variant"></div>
+          <div id="strength4" class="flex-1 password-strength bg-outline-variant"></div>
+        </div>
+        <p id="strengthText" class="font-label-bold text-label-bold text-outline-variant"></p>
+      </div>
+
+      <!-- Terms -->
+      <div class="flex items-start gap-sm pt-xs">
+        <input id="terms" class="mt-1 w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox" required/>
+        <label class="font-body-sm text-body-sm text-on-surface-variant" for="terms">
+          আমি আমাদের <a class="text-primary font-semibold hover:underline" href="#">শর্তাবলী</a> এবং <a class="text-primary font-semibold hover:underline" href="#">গোপনীয়তা নীতি</a> মেনে নিচ্ছি।
+        </label>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorMsg" class="hidden bg-error-container text-on-error-container text-body-sm p-sm rounded-lg"></div>
+
+      <!-- Submit Button -->
+      <button id="signupBtn" class="w-full py-md px-lg bg-primary text-white font-headline-md text-body-md rounded-lg shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-base" type="submit">
+        <span id="btnText">অ্যাকাউন্ট খুলুন</span>
+        <span id="btnSpinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+      </button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="mt-lg pt-lg border-t border-outline-variant text-center">
+      <p class="font-body-md text-body-md text-on-surface-variant">
+        ইতিমধ্যে অ্যাকাউন্ট আছে?
+        <a class="text-primary font-bold hover:underline ml-xs" href="login.html">লগ-ইন করুন</a>
+      </p>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="mt-xl flex items-center justify-center gap-md opacity-60">
+      <div class="flex items-center gap-xs">
+        <span class="material-symbols-outlined text-sm">verified_user</span>
+        <span class="font-label-bold text-[10px] uppercase tracking-widest">নিরাপদ এনক্রিপশন</span>
+      </div>
+      <div class="w-1 h-1 bg-outline-variant rounded-full"></div>
+      <div class="flex items-center gap-xs">
+        <span class="material-symbols-outlined text-sm">gpp_good</span>
+        <span class="font-label-bold text-[10px] uppercase tracking-widest">লাইসেন্সপ্রাপ্ত প্রতিষ্ঠান</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  // Already logged in?
+  if (localStorage.getItem('biniyog_token')) {
+    window.location.href = 'dashboard.html';
+  }
+
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility_off';
+    }
+  }
+
+  function checkPasswordStrength(password) {
+    const bars = ['strength1','strength2','strength3','strength4'];
+    const text = document.getElementById('strengthText');
+    bars.forEach(id => document.getElementById(id).style.backgroundColor = '#bfcaba');
+
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    const colors = ['#ba1a1a', '#f59e0b', '#3b82f6', '#0d631b'];
+    const labels = ['দুর্বল', 'মোটামুটি', 'ভালো', 'শক্তিশালী'];
+    for (let i = 0; i < strength; i++) {
+      document.getElementById(bars[i]).style.backgroundColor = colors[strength - 1];
+    }
+    text.textContent = password.length > 0 ? `পাসওয়ার্ড: ${labels[strength - 1] || ''}` : '';
+    text.style.color = strength > 0 ? colors[strength - 1] : '#bfcaba';
+  }
+
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span> ${message}`;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 4000);
+  }
+
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const password = document.getElementById('password').value;
+    const terms = document.getElementById('terms').checked;
+    const btn = document.getElementById('signupBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const errorMsg = document.getElementById('errorMsg');
+
+    errorMsg.classList.add('hidden');
+
+    if (!terms) {
+      errorMsg.textContent = 'শর্তাবলী মেনে নেওয়া আবশ্যক।';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+
+    if (password.length < 8) {
+      errorMsg.textContent = 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+
+    // Loading
+    btn.classList.add('btn-loading');
+    btnText.textContent = 'অ্যাকাউন্ট তৈরি হচ্ছে...';
+    btnSpinner.classList.remove('hidden');
+
+    try {
+      const response = await fetch(`${API_BASE}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, mobile, password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem('biniyog_token', data.token);
+        localStorage.setItem('biniyog_user', JSON.stringify(data.user));
+        showToast(data.message || 'অ্যাকাউন্ট তৈরি সফল!', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+      } else {
+        errorMsg.textContent = data.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।';
+        errorMsg.classList.remove('hidden');
+      }
+    } catch (error) {
+      errorMsg.textContent = 'সার্ভারের সাথে সংযোগ হচ্ছে না। আবার চেষ্টা করুন।';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      btn.classList.remove('btn-loading');
+      btnText.textContent = 'অ্যাকাউন্ট খুলুন';
+      btnSpinner.classList.add('hidden');
+    }
+  });
+</script>
+</body>
+</html>
