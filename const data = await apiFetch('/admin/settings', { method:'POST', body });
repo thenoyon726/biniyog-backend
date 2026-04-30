@@ -577,7 +577,7 @@ function quickAddBalance(id, name) {
   const amount = prompt(`${name} কে কত টাকা যোগ করবেন?`);
   if (!amount || isNaN(amount) || amount <= 0) return;
   const note = prompt('কারণ লিখুন (ঐচ্ছিক):') || '';
-  apiFetch(`/admin/users/${id}/add-balance`, { method:'POST', body:{ amount:parseFloat(amount), note } })
+  apiFetch(`/admin/users/${id}/add-balance`, { method:'PUT', body:{ amount:parseFloat(amount), note } })
     .then(d => { if (d?.success) { showToast(d.message,'success'); loadUsers(); } else showToast(d?.message||'সমস্যা','error'); });
 }
 
