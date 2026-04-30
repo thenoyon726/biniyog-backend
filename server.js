@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // ── API Routes ──────────────────────────────────
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/transaction', require('./routes/transaction'));
+app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/plans', require('./routes/plan'));
 app.use('/api/notifications', require('./routes/notification'));
 app.use('/api/admin', require('./routes/admin'));
