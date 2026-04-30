@@ -1,12 +1,41 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "login.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static",
+      "config": {
+        "includeFiles": ["shared.js"]
+      }
+    }
+  ],
   "routes": [
     {
       "src": "/",
       "dest": "/login.html"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.*\\.html)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*\\.css)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*\\.js)",
       "dest": "/$1"
     }
   ]
