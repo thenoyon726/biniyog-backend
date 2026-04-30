@@ -196,7 +196,8 @@ let selectedMethod = 'bkash';
 // ── Page লোড হলে Admin Settings থেকে নম্বর আনো ──
 async function loadPaymentNumbers() {
   try {
-    const data = await apiFetch('/admin/settings');
+    const res2 = await fetch('https://biniyog-backend.vercel.app/api/settings');
+const data = await res2.json();
     if (data?.success && data.settings) {
       const s = data.settings;
       if (s.bkashNumber)  paymentMethods.bkash.number  = s.bkashNumber;
