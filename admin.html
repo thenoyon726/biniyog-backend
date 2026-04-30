@@ -777,7 +777,13 @@ async function saveSettings() {
   };
   const btn = document.getElementById('saveSettingsBtn');
   btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে...';
-  const data = await apiFetch('/admin/settings', { method:'PUT', body });
+  const token = localStorage.getItem('token');
+const res2 = await fetch('https://biniyog-backend.vercel.app/api/admin/settings', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+  body: JSON.stringify(body)
+});
+const data = await res2.json();
   btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">save</span> সংরক্ষণ করুন';
   if (data?.success) showToast('সেটিংস সংরক্ষণ হয়েছে ✅', 'success');
   else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
