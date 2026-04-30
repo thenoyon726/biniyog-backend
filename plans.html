@@ -864,6 +864,16 @@ const API = 'https://biniyog-backend.onrender.com/api';
 let currentPlan = {};
 let userBalance = 0;
 
+  let plansData = [];
+
+async function loadPlans() {
+  try {
+    const res = await fetch(API + '/plans');
+    const data = await res.json();
+    if (data.success) plansData = data.plans;
+  } catch(e) {}
+}
+loadPlans();
 function showToast(msg, color) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -876,7 +886,8 @@ async function investNow(name, minAmount, daily, pct, days) {
   const token = localStorage.getItem('biniyog_token');
   if (!token) { window.location.href = 'login.html'; return; }
 
-  currentPlan = { name, minAmount, daily, pct, days };
+  const planObj = plansData.find(p => p.minAmount === minAmount);
+currentPlan = { name, minAmount, daily, pct, days, id: planObj?._id };
   document.getElementById('modalPlanName').textContent = name;
   document.getElementById('modalDaily').textContent = '৳' + daily + '/দিন';
   document.getElementById('modalDuration').textContent = days + ' দিন';
@@ -928,7 +939,7 @@ async function confirmInvest() {
     const res = await fetch(API + '/plans/invest', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ planName: currentPlan.name, amount, minAmount: currentPlan.minAmount })
+      body: JSON.stringify({ planId: currentPlan.id, amount })
     });
     const data = await res.json();
     if (data.success) {
