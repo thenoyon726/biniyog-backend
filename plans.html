@@ -860,7 +860,7 @@
 <div id="toast" style="display:none; position:fixed; bottom:90px; left:50%; transform:translateX(-50%); color:#fff; padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; z-index:9999; white-space:nowrap;"></div>
 
 <script>
-const API = 'https://biniyog-backend.vercel.app/api';
+const API = 'https://biniyog-backend.onrender.com/api';
 let currentPlan = {};
 let userBalance = 0;
 
@@ -873,7 +873,7 @@ function showToast(msg, color) {
 }
 
 async function investNow(name, minAmount, daily, pct, days) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('biniyog_token');
   if (!token) { window.location.href = 'login.html'; return; }
 
   currentPlan = { name, minAmount, daily, pct, days };
@@ -905,7 +905,7 @@ function closeModal() {
 }
 
 async function confirmInvest() {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('biniyog_token');
   const amount = parseFloat(document.getElementById('investAmountInput').value);
 
   if (!amount || amount < currentPlan.minAmount) {
