@@ -30,7 +30,18 @@ app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/plans', require('./routes/plan'));
 app.use('/api/notifications', require('./routes/notification'));
 app.use('/api/admin', require('./routes/admin'));
-
+// Public settings (login ছাড়াও দেখা যাবে - payment numbers এর জন্য)
+app.get('/api/settings', async (req, res) => {
+  try {
+    const Setting = require('./models/Setting');
+    let settings = await Setting.findOne();
+    if (!settings) settings = { bkashNumber: '', nagadNumber: '', rocketNumber: '' };
+    res.json({ success: true, settings });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
+ 
 // ── Health Check ────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'বিনিয়োগ অ্যাপ সার্ভার চালু আছে! 🚀', version: '2.0.0', time: new Date() });
