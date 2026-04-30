@@ -184,28 +184,50 @@
 <script>
 requireAuth();
 
+// Payment methods — API থেকে লোড হবে
 const paymentMethods = {
-  bkash: { number: '01XXXXXXXXX', title: 'bKash-এ পাঠান', type: 'Personal (Send Money)' },
-  nagad: { number: '01XXXXXXXXX', title: 'Nagad-এ পাঠান', type: 'Personal (Send Money)' },
-  rocket: { number: '01XXXXXXXXX', title: 'Rocket-এ পাঠান', type: 'Personal (Send Money)' }
+  bkash:  { number: '', title: 'bKash-এ পাঠান',  type: 'Personal (Send Money)' },
+  nagad:  { number: '', title: 'Nagad-এ পাঠান',  type: 'Personal (Send Money)' },
+  rocket: { number: '', title: 'Rocket-এ পাঠান', type: 'Personal (Send Money)' }
 };
-// ⚠️ এখানে আপনার আসল নম্বর দিন .env বা admin settings থেকে
 
 let selectedMethod = 'bkash';
+
+// ── Page লোড হলে Admin Settings থেকে নম্বর আনো ──
+async function loadPaymentNumbers() {
+  try {
+    const data = await apiFetch('/admin/settings');
+    if (data?.success && data.settings) {
+      const s = data.settings;
+      if (s.bkashNumber)  paymentMethods.bkash.number  = s.bkashNumber;
+      if (s.nagadNumber)  paymentMethods.nagad.number  = s.nagadNumber;
+      if (s.rocketNumber) paymentMethods.rocket.number = s.rocketNumber;
+    }
+  } catch(e) {
+    console.log('Settings লোড ব্যর্থ:', e);
+  }
+  // লোডের পর বর্তমান method আপডেট করো
+  updateMethodDisplay(selectedMethod);
+}
+
+function updateMethodDisplay(method) {
+  const m = paymentMethods[method];
+  document.getElementById('methodTitle').textContent = m.title;
+  document.getElementById('payNumber').textContent   = m.number || 'লোড হচ্ছে...';
+  document.getElementById('payType').textContent     = m.type;
+}
 
 function selectMethod(method, el) {
   selectedMethod = method;
   document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const m = paymentMethods[method];
-  document.getElementById('methodTitle').textContent = m.title;
-  document.getElementById('payNumber').textContent = m.number;
-  document.getElementById('payType').textContent = m.type;
+  updateMethodDisplay(method);
 }
 
 function copyNumber() {
   const num = document.getElementById('payNumber').textContent;
-  navigator.clipboard.writeText(num).then(() => showToast('নম্বর কপি হয়েছে!', 'success'));
+  if (!num || num === 'লোড হচ্ছে...') return showToast('নম্বর এখনো লোড হয়নি', 'error');
+  navigator.clipboard.writeText(num).then(() => showToast('নম্বর কপি হয়েছে! ✅', 'success'));
 }
 
 function setAmount(v) {
@@ -215,13 +237,13 @@ function setAmount(v) {
 }
 
 async function submitDeposit() {
-  const amount = parseFloat(document.getElementById('amount').value);
-  const senderNumber = document.getElementById('senderNumber').value.trim();
+  const amount        = parseFloat(document.getElementById('amount').value);
+  const senderNumber  = document.getElementById('senderNumber').value.trim();
   const transactionId = document.getElementById('trxId').value.trim();
 
   if (!amount || amount < 100) return showToast('সর্বনিম্ন ডিপোজিট ১০০ টাকা।', 'error');
-  if (!senderNumber) return showToast('আপনার পাঠানো নম্বর দিন।', 'error');
-  if (!transactionId) return showToast('ট্র্যানজেকশন আইডি দিন।', 'error');
+  if (!senderNumber)           return showToast('আপনার পাঠানো নম্বর দিন।', 'error');
+  if (!transactionId)          return showToast('ট্র্যানজেকশন আইডি দিন।', 'error');
 
   const btn = document.getElementById('depositBtn');
   btn.disabled = true;
@@ -244,6 +266,11 @@ async function submitDeposit() {
   } else {
     showToast(data?.message || 'কিছু সমস্যা হয়েছে।', 'error');
   }
+}
+
+// Page লোড হলে নম্বর ফেচ করো
+loadPaymentNumbers();
+</script>
 }
 </script>
 </body>
