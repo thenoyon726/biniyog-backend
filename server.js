@@ -21,16 +21,7 @@ app.use(cors({
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: { success: false, message: 'অনেক বেশি রিকুয়েস্ট। একটু পর চেষ্টা করুন।' } });
 app.use('/api/auth', limiter);
 
-// ── Static Files ────────────────────────────────
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// ── API Routes ──────────────────────────────────
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/transactions', require('./routes/transactions'));
-app.use('/api/plans', require('./routes/plan'));
-app.use('/api/notifications', require('./routes/notification'));
-app.use('/api/admin', require('./routes/admin'));
-// Public settings (login ছাড়াও দেখা যাবে - payment numbers এর জন্য)
+// Public settings
 app.get('/api/settings', async (req, res) => {
   try {
     const Setting = require('./models/Setting');
@@ -41,7 +32,16 @@ app.get('/api/settings', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
- 
+// ── Static Files ────────────────────────────────
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// ── API Routes ──────────────────────────────────
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/transactions', require('./routes/transactions'));
+app.use('/api/plans', require('./routes/plan'));
+app.use('/api/notifications', require('./routes/notification'));
+app.use('/api/admin', require('./routes/admin'));
+
 // ── Health Check ────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'বিনিয়োগ অ্যাপ সার্ভার চালু আছে! 🚀', version: '2.0.0', time: new Date() });
