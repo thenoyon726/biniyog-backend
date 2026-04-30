@@ -928,7 +928,7 @@ async function confirmInvest() {
     const res = await fetch(API + '/plans/invest', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ planName: currentPlan.name, amount })
+      body: JSON.stringify({ planName: currentPlan.name, amount, minAmount: currentPlan.minAmount })
     });
     const data = await res.json();
     if (data.success) {
