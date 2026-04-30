@@ -194,7 +194,7 @@ let selectedMethod = 'bkash';
 // ── Page লোড হলে Admin Settings থেকে নম্বর আনো ──
 async function loadPaymentNumbers() {
   try {
-    const res2 = await fetch('https://biniyog-backend.vercel.app/api/settings');
+    const res2 = await fetch('https://biniyog-backend.onrender.com/api/settings');
 const data = await res2.json();
     if (data?.success && data.settings) {
       const s = data.settings;
@@ -248,7 +248,7 @@ async function submitDeposit() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> প্রসেস হচ্ছে...';
 
-  const data = await apiFetch('/transaction/deposit', {
+  const data = await apiFetch('/transactions/deposit', {
     method: 'POST',
     body: { amount, paymentMethod: selectedMethod, senderNumber, transactionId }
   });
