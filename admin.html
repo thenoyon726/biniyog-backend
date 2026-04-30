@@ -760,7 +760,7 @@ document.getElementById('rejectModal').addEventListener('click', e => { if(e.tar
 
   // ── Settings ──────────────────────────────
 async function loadSettings() {
-  const res = await fetch('https://biniyog-backend.vercel.app/api/settings');
+  const res = await fetch('https://biniyog-backend.onrender.com/api/settings');
   const data = await res.json();
   if (data?.success && data.settings) {
     document.getElementById('setBkash').value = data.settings.bkashNumber || '';
