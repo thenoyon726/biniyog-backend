@@ -97,12 +97,13 @@ router.get('/history', protect, async (req, res) => {
     const total = await Transaction.countDocuments(query);
     const txns = await Transaction.find(query)
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((page - 1) * parseInt(limit))
       .limit(parseInt(limit))
-      .populate({ path: 'plan', select: 'name', strictPopulate: false });
+      .lean();
 
-    res.json({ success: true, transactions: txns, pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) } });
+    res.json({ success: true, transactions: txns, pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) } });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
