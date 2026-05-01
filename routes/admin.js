@@ -126,10 +126,27 @@ router.put('/transactions/:id/approve', async (req, res) => {
     await txn.save();
 
     if (txn.type === 'deposit') {
-      user.balance += txn.amount;
+      // Referral bonus calculate
+      const refCount = user.referralCount || 0;
+      let bonusPct = 0;
+      if (refCount >= 20) bonusPct = 25;
+      else if (refCount >= 5) bonusPct = 10;
+
+      const bonusAmount = bonusPct > 0 ? Math.floor(txn.amount * bonusPct / 100) : 0;
+
+      user.balance += txn.amount + bonusAmount;
       user.totalDeposit += txn.amount;
+      if (bonusAmount > 0) {
+        user.referralEarnings += bonusAmount;
+        user.referralBonusUsed = refCount;
+      }
       await user.save({ validateBeforeSave: false });
-      await Notification.create({ user: user._id, title: 'ডিপোজিট অনুমোদিত', message: `৳${txn.amount} ডিপোজিট অনুমোদন হয়েছে। ব্যালেন্স আপডেট হয়েছে।`, type: 'success', icon: 'check_circle' });
+
+      const msg = bonusAmount > 0
+        ? `৳${txn.amount} ডিপোজিট অনুমোদন হয়েছে। রেফারেল বোনাস ${bonusPct}% = ৳${bonusAmount} যোগ হয়েছে!`
+        : `৳${txn.amount} ডিপোজিট অনুমোদন হয়েছে। ব্যালেন্স আপডেট হয়েছে।`;
+
+      await Notification.create({ user: user._id, title: 'ডিপোজিট অনুমোদিত', message: msg, type: 'success', icon: 'check_circle' });
     }
 
     if (txn.type === 'withdraw') {
