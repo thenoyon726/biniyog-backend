@@ -809,7 +809,11 @@ async function saveSettings() {
 let currentChatUserId = null;
 
 async function loadSupportChats() {
-  const data = await apiFetch('/admin/chat/all');
+  const token = localStorage.getItem('biniyog_token');
+  const res = await fetch('https://biniyog-backend.onrender.com/api/chat/all', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  const data = await res.json();
   const el = document.getElementById('supportList');
   if (!data?.success || !data.chats.length) {
     el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3)">কোনো চ্যাট নেই</div>';
