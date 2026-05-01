@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me
 router.get('/me', protect, async (req, res) => {
   const user = await User.findById(req.user.id);
-  res.json({ success: true, user: { id: user._id, name: user.name, mobile: user.mobile, role: user.role, balance: user.balance, totalDeposit: user.totalDeposit, totalWithdraw: user.totalWithdraw, totalProfit: user.totalProfit, referralCode: user.referralCode, referralEarnings: user.referralEarnings, bkashNumber: user.bkashNumber, nagadNumber: user.nagadNumber, nidNumber: user.nidNumber, isVerified: user.isVerified, createdAt: user.createdAt, lastLogin: user.lastLogin } });
+  res.json({ success: true, user: { id: user._id, name: user.name, mobile: user.mobile, role: user.role, balance: user.balance, totalDeposit: user.totalDeposit, totalWithdraw: user.totalWithdraw, totalProfit: user.totalProfit, referralCode: user.referralCode, referralEarnings: user.referralEarnings, referralCount: user.referralCount, referralBonusUsed: user.referralBonusUsed, bkashNumber: user.bkashNumber, nagadNumber: user.nagadNumber, nidNumber: user.nidNumber, isVerified: user.isVerified, createdAt: user.createdAt, lastLogin: user.lastLogin } });
 });
 
 // PUT /api/auth/profile
