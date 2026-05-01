@@ -326,7 +326,18 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="shared.js"></script>
+<script>
+const API_BASE = 'https://biniyog-backend.onrender.com/api';
+async function apiFetch(path, opts = {}) {
+  const token = localStorage.getItem('biniyog_token');
+  const res = await fetch(API_BASE + path, {
+    method: opts.method || 'GET',
+    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+    ...(opts.body ? { body: JSON.stringify(opts.body) } : {})
+  });
+  return res.json();
+}
+</script>
 <script>
 const API_BASE = 'https://biniyog-backend.onrender.com/api';
 
