@@ -183,7 +183,7 @@ async function submitWithdraw() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> প্রসেস হচ্ছে...';
 
-  const data = await apiFetch('/transaction/withdraw', {
+  const data = await apiFetch('/transactions/withdraw', {
     method: 'POST',
     body: { amount, paymentMethod: selectedMethod, senderNumber }
   });
