@@ -50,8 +50,8 @@ router.post('/withdraw', protect, async (req, res) => {
     const { amount, paymentMethod, senderNumber } = req.body;
     const user = await User.findById(req.user._id);
 
-    if (!amount || amount < 500) {
-      return res.status(400).json({ success: false, message: 'সর্বনিম্ন উইথড্র ৫০০ টাকা।' });
+    if (!amount || amount < 120) {
+      return res.status(400).json({ success: false, message: 'সর্বনিম্ন উইথড্র ১২০ টাকা।' });
     }
     if (user.balance < amount) {
       return res.status(400).json({ success: false, message: `পর্যাপ্ত ব্যালেন্স নেই। বর্তমান ব্যালেন্স: ৳${user.balance}` });
