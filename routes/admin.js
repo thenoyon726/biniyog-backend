@@ -256,4 +256,24 @@ router.put('/settings', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
+// GET /api/admin/investments
+router.get('/investments', async (req, res) => {
+  try {
+    const { page = 1, limit = 20, status } = req.query;
+    const query = {};
+    if (status) query.status = status;
+
+    const total = await Investment.countDocuments(query);
+    const investments = await Investment.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .populate('user', 'name mobile')
+      .populate('plan', 'name icon');
+
+    res.json({ success: true, investments, pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 module.exports = router;
