@@ -307,23 +307,55 @@ async function loadDashboard() {
 async function loadTransactions() {
   const data = await apiFetch('/transaction/history?limit=5');
   const el = document.getElementById('txnList');
-  if (!data?.success || data.transactions.length === 0) {
-  showFakeTx();
-  return;
-}
-  el.innerHTML = data.transactions.map(t => {
-    const isPositive = ['deposit','profit','referral','refund'].includes(t.type);
-    const icons = { deposit:'💰', withdraw:'💸', profit:'📈', investment:'🏦', referral:'🎁', refund:'↩️' };
-    const colors = { deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', investment:'var(--blue-dim)', referral:'var(--gold-dim)', refund:'var(--surface3)' };
-    return `<div class="txn-item">
-      <div class="txn-icon" style="background:${colors[t.type]||'var(--surface3)'}">${icons[t.type]||'💳'}</div>
-      <div class="txn-info">
-        <div class="txn-name">${typeLabel(t.type)}</div>
-        <div class="txn-date">${formatDateTime(t.createdAt)} · ${statusBadge(t.status)}</div>
-      </div>
-      <div class="txn-amount ${isPositive?'positive':'negative'}">${isPositive?'+':'-'}${formatBDTEn(t.amount)}</div>
-    </div>`;
-  }).join('');
+
+  const icons = { deposit:'💰', withdraw:'💸', profit:'📈', investment:'🏦', referral:'🎁', refund:'↩️' };
+  const colors = { deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', investment:'var(--blue-dim)', referral:'var(--gold-dim)', refund:'var(--surface3)' };
+
+  // Real transactions HTML
+  let realHTML = '';
+  if (data?.success && data.transactions.length > 0) {
+    realHTML = data.transactions.map(t => {
+      const isPositive = ['deposit','profit','referral','refund'].includes(t.type);
+      return `<div class="txn-item">
+        <div class="txn-icon" style="background:${colors[t.type]||'var(--surface3)'}">${icons[t.type]||'💳'}</div>
+        <div class="txn-info">
+          <div class="txn-name">${typeLabel(t.type)}</div>
+          <div class="txn-date">${formatDateTime(t.createdAt)} · ${statusBadge(t.status)}</div>
+        </div>
+        <div class="txn-amount ${isPositive?'positive':'negative'}">${isPositive?'+':'-'}${formatBDTEn(t.amount)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Fake transactions
+  const names = ['রা** হো**','কা** আ**','মো** সা**','সা** বে**','আ** ক**','না** হা**','তা** মি**','রু** খা**'];
+  const amounts = [500,1000,1500,2000,2500,3000,5000,7500,10000];
+  const types = ['ডিপোজিট','উইথড্রো'];
+  const times = ['২ মিনিট আগে','৭ মিনিট আগে','১৫ মিনিট আগে','২৮ মিনিট আগে','৪৫ মিনিট আগে','১ ঘন্টা আগে'];
+  function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function renderAll() {
+    const shuffledNames = [...names].sort(() => Math.random() - 0.5).slice(0, 4);
+    const fakeHTML = shuffledNames.map(name => {
+      const type = rnd(types);
+      const amt = rnd(amounts);
+      const isPos = type==='ডিপোজিট';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:${isPos?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};display:flex;align-items:center;justify-content:center">${isPos?'⬆️':'⬇️'}</div>
+          <div>
+            <div style="font-weight:600;font-size:14px">${name}</div>
+            <div style="font-size:12px;color:var(--text3)">${type} · ${rnd(times)}</div>
+          </div>
+        </div>
+        <div style="font-weight:700;color:${isPos?'#22c55e':'#ef4444'}">${isPos?'+':'-'}৳${amt.toLocaleString('bn-BD')}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = realHTML + fakeHTML;
+  }
+
+  renderAll();
+  setInterval(renderAll, 8000);
 }
 
   function showFakeTx() {
