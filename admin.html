@@ -465,6 +465,7 @@ function showSection(sec) {
     el.classList.toggle('active', secs[i] === sec);
   });
   currentSection = sec;
+window.location.hash = sec;
   if (sec === 'dashboard') { loadStats(); loadQuick(); }
   if (sec === 'deposits') loadDeposits();
   if (sec === 'withdraws') loadWithdraws();
@@ -939,7 +940,8 @@ async function loadInvestments() {
   renderAdminPagination('investmentPagination', data.pagination, invPage, p => { invPage = p; loadInvestments(); });
 }
 // ── Init ──────────────────────────────────
-showSection('dashboard');
+const initSection = window.location.hash.replace('#','') || 'dashboard';
+showSection(initSection);
 </script>
 </body>
 </html>
