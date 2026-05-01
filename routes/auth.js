@@ -24,6 +24,9 @@ router.post('/signup', async (req, res) => {
     }
 
     const user = await User.create({ name, mobile, password, referredBy });
+    if (referredBy) {
+      await User.findByIdAndUpdate(referredBy, { $inc: { referralCount: 1 } });
+    }
     await Notification.create({
       user: user._id,
       title: 'স্বাগতম!',
