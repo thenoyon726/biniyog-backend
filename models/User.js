@@ -66,7 +66,15 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
     default: null
   },
-  referralEarnings: {
+referralEarnings: {
+    type: Number,
+    default: 0
+  },
+  referralCount: {
+    type: Number,
+    default: 0
+  },
+  referralBonusUsed: {
     type: Number,
     default: 0
   },
