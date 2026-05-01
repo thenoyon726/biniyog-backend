@@ -319,7 +319,7 @@ async function loadTransactions() {
       return `<div class="txn-item">
         <div class="txn-icon" style="background:${colors[t.type]||'var(--surface3)'}">${icons[t.type]||'💳'}</div>
         <div class="txn-info">
-          <div class="txn-name">${typeLabel(t.type)}</div>
+          <div class="txn-name">${getUser()?.name || ''} · ${typeLabel(t.type)}</div>
           <div class="txn-date">${formatDateTime(t.createdAt)} · ${statusBadge(t.status)}</div>
         </div>
         <div class="txn-amount ${isPositive?'positive':'negative'}">${isPositive?'+':'-'}${formatBDTEn(t.amount)}</div>
