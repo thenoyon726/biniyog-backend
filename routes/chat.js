@@ -48,7 +48,7 @@ router.post('/', protect, async (req, res) => {
 // GET /api/chat/all — admin সব chat দেখবে
 router.get('/all', protect, async (req, res) => {
   try {
-    if (!req.user.isAdmin) return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
     const chats = await Chat.find().populate('user', 'name mobile').sort({ updatedAt: -1 });
     res.json({ success: true, chats });
   } catch (err) {
@@ -59,7 +59,7 @@ router.get('/all', protect, async (req, res) => {
 // POST /api/chat/:userId/reply — admin reply করবে
 router.post('/:userId/reply', protect, async (req, res) => {
   try {
-    if (!req.user.isAdmin) return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
     const { message } = req.body;
     const chat = await Chat.findOne({ user: req.params.userId });
     if (!chat) return res.status(404).json({ success: false, message: 'চ্যাট পাওয়া যায়নি।' });
