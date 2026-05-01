@@ -299,6 +299,25 @@ td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
           <span class="material-symbols-outlined">save</span> সংরক্ষণ করুন
         </button>
       </div>
+      <!-- ════ SUPPORT SECTION ════ -->
+<div id="sec-support" style="display:none">
+  <div class="card">
+    <div id="supportList"><div class="spinner"></div></div>
+  </div>
+  <div class="modal-overlay" id="chatModal">
+    <div class="modal" style="max-width:500px;height:80vh;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="modal-title" id="chatModalTitle" style="margin:0">চ্যাট</div>
+        <button class="btn btn-secondary btn-sm" onclick="closeChatModal()">✕ বন্ধ</button>
+      </div>
+      <div id="adminChatMessages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input type="text" id="adminReplyInput" class="form-input" placeholder="Reply লিখুন..." style="flex:1"/>
+        <button class="btn btn-primary" onclick="sendAdminReply()">পাঠান</button>
+      </div>
+    </div>
+  </div>
+</div>
     </div>
   </div><!-- end page-content -->
 </main>
@@ -399,7 +418,9 @@ const sectionTitles = {
   withdraws: ['💸 উইথড্র ম্যানেজমেন্ট', 'উইথড্র অনুমোদন/বাতিল করুন'],
   users: ['👥 ইউজার ম্যানেজমেন্ট', 'সব ইউজারের তালিকা'],
   plans: ['📈 প্ল্যান ম্যানেজমেন্ট', 'বিনিয়োগ প্ল্যান তৈরি/সম্পাদনা'],
-  broadcast: ['📢 যোগাযোগ', 'বার্তা ও ব্যালেন্স নিয়ন্ত্রণ'],settings: ['⚙️ সেটিংস', 'পেমেন্ট নম্বর ও সিস্টেম সেটিংস']
+  broadcast: ['📢 যোগাযোগ', 'বার্তা ও ব্যালেন্স নিয়ন্ত্রণ'],
+  settings: ['⚙️ সেটিংস', 'পেমেন্ট নম্বর ও সিস্টেম সেটিংস'],
+  support: ['🎧 সাপোর্ট চ্যাট', 'কাস্টমার সাপোর্ট ম্যানেজমেন্ট']
 };
 
 function showSection(sec) {
@@ -408,7 +429,7 @@ function showSection(sec) {
   document.getElementById('sectionTitle').textContent = sectionTitles[sec][0];
   document.getElementById('sectionSub').textContent = sectionTitles[sec][1];
   document.querySelectorAll('.sidebar .nav-item').forEach((el,i) => {
-    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast','settings'];
+    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast','settings','support'];
     el.classList.toggle('active', secs[i] === sec);
   });
   currentSection = sec;
@@ -418,6 +439,7 @@ function showSection(sec) {
   if (sec === 'users') loadUsers();
   if (sec === 'plans') loadAdminPlans();
   if (sec === 'settings') loadSettings();
+  if (sec === 'support') loadSupportChats();
 }
 
 // ── Stats ────────────────────────────────
@@ -783,6 +805,60 @@ async function saveSettings() {
   if (data?.success) showToast('সেটিংস সংরক্ষণ হয়েছে ✅', 'success');
   else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
 }
+  // ── Support Chat ─────────────────────────
+let currentChatUserId = null;
+
+async function loadSupportChats() {
+  const data = await apiFetch('/admin/chat/all');
+  const el = document.getElementById('supportList');
+  if (!data?.success || !data.chats.length) {
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3)">কোনো চ্যাট নেই</div>';
+    return;
+  }
+  el.innerHTML = `<table><thead><tr><th>ইউজার</th><th>মোবাইল</th><th>শেষ বার্তা</th><th>অ্যাকশন</th></tr></thead><tbody>
+    ${data.chats.map(c => `<tr>
+      <td style="font-weight:700">${c.user?.name||'—'}</td>
+      <td>${c.user?.mobile||'—'}</td>
+      <td style="font-size:12px;color:var(--text3);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.lastMessage||'—'}</td>
+      <td><button class="btn btn-approve btn-sm" onclick="openChatModal('${c.user?._id}','${c.user?.name}')">💬 Reply</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function openChatModal(userId, userName) {
+  currentChatUserId = userId;
+  document.getElementById('chatModalTitle').textContent = userName + ' এর চ্যাট';
+  document.getElementById('chatModal').classList.add('open');
+  const data = await apiFetch('/admin/chat/all');
+  const chat = data?.chats?.find(c => c.user?._id === userId);
+  const el = document.getElementById('adminChatMessages');
+  if (!chat) { el.innerHTML = '<p>কোনো বার্তা নেই</p>'; return; }
+  el.innerHTML = chat.messages.map(m => `
+    <div style="display:flex;flex-direction:column;align-items:${m.sender==='admin'?'flex-end':'flex-start'}">
+      <div style="background:${m.sender==='admin'?'var(--primary)':'var(--surface2)'};color:${m.sender==='admin'?'#fff':'var(--text)'};padding:8px 12px;border-radius:12px;font-size:13px;max-width:80%">${m.message}</div>
+    </div>
+  `).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function closeChatModal() {
+  document.getElementById('chatModal').classList.remove('open');
+  currentChatUserId = null;
+}
+
+async function sendAdminReply() {
+  const msg = document.getElementById('adminReplyInput').value.trim();
+  if (!msg || !currentChatUserId) return;
+  const data = await apiFetch(`/admin/chat/${currentChatUserId}/reply`, { method:'POST', body:{ message: msg } });
+  if (data?.success) {
+    document.getElementById('adminReplyInput').value = '';
+    openChatModal(currentChatUserId, document.getElementById('chatModalTitle').textContent.replace(' এর চ্যাট',''));
+  } else showToast(data?.message||'সমস্যা।','error');
+}
+
+document.getElementById('chatModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('chatModal')) closeChatModal();
+});
 // ── Init ──────────────────────────────────
 showSection('dashboard');
 </script>
