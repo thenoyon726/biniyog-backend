@@ -133,7 +133,15 @@
         </div>
         <p id="strengthText" class="font-label-bold text-label-bold text-outline-variant"></p>
       </div>
-
+      
+<!-- Referral Code Field (Optional) -->
+      <div class="space-y-xs">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block">রেফারেল কোড (ঐচ্ছিক)</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">card_giftcard</span>
+          <input id="referralCode" name="referralCode" class="w-full pl-[52px] pr-md py-md bg-[#F5F7F5] border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="রেফারেল কোড থাকলে লিখুন" type="text"/>
+        </div>
+      </div>
       <!-- Terms -->
       <div class="flex items-start gap-sm pt-xs">
         <input id="terms" class="mt-1 w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox" required/>
@@ -255,10 +263,11 @@
     btnSpinner.classList.remove('hidden');
 
     try {
+      const referralCode = document.getElementById('referralCode').value.trim();
       const response = await fetch(`${API_BASE}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, mobile, password })
+        body: JSON.stringify({ name, mobile, password, referralCode: referralCode || undefined })
       });
 
       const data = await response.json();
