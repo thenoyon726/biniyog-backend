@@ -103,10 +103,12 @@
       <div class="form-group">
         <label class="form-label">পরিমাণ (টাকা)</label>
         <div class="amount-presets">
+          <div class="preset" onclick="setAmount(500,this)">৳১২০</div>
           <div class="preset" onclick="setAmount(500,this)">৳৫০০</div>
           <div class="preset" onclick="setAmount(1000,this)">৳১,০০০</div>
           <div class="preset" onclick="setAmount(5000,this)">৳৫,০০০</div>
           <div class="preset" onclick="setAmount(10000,this)">৳১০,০০০</div>
+           <div class="preset" onclick="setAmount(10000,this)">৳২০,০০০</div>
         </div>
         <input type="number" id="amount" class="form-input" placeholder="পরিমাণ লিখুন (সর্বনিম্ন ৫০০)" min="500"/>
       </div>
