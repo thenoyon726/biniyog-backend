@@ -144,3 +144,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (href && href === currentPage) item.classList.add('active');
   });
 });
+// ── Floating Support Buttons ──────────────────────
+(function() {
+  const WHATSAPP_NUMBER = '8801XXXXXXXXX'; // এখানে নম্বর বসাবেন
+  const TELEGRAM_LINK = 'https://t.me/yourchannel'; // এখানে চ্যানেল লিঙ্ক বসাবেন
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .float-btns { position:fixed; bottom:90px; right:16px; display:flex; flex-direction:column; gap:10px; z-index:9999; }
+    .float-btn { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); text-decoration:none; transition:transform 0.2s; border:none; }
+    .float-btn:hover { transform:scale(1.1); }
+    .float-btn.whatsapp { background:#25D366; }
+    .float-btn.telegram { background:#229ED9; }
+    .float-btn.chat { background:#f59e0b; }
+  `;
+  document.head.appendChild(style);
+
+  const div = document.createElement('div');
+  div.className = 'float-btns';
+  div.innerHTML = `
+    <a href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" class="float-btn whatsapp" title="WhatsApp সাপোর্ট">💬</a>
+    <a href="${TELEGRAM_LINK}" target="_blank" class="float-btn telegram" title="Telegram চ্যানেল">✈️</a>
+    <a href="support.html" class="float-btn chat" title="লাইভ চ্যাট">🎧</a>
+  `;
+  document.body.appendChild(div);
+})();
