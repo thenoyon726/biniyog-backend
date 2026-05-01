@@ -327,7 +327,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_BASE = 'https://biniyog-backend.onrender.com/api';
 async function apiFetch(path, opts = {}) {
   const token = localStorage.getItem('biniyog_token');
   const res = await fetch(API_BASE + path, {
