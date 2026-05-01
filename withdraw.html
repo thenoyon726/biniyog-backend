@@ -175,7 +175,7 @@ async function submitWithdraw() {
   const amount = parseFloat(document.getElementById('amount').value);
   const senderNumber = document.getElementById('recipientNumber').value.trim();
 
-  if (!amount || amount < 500) return showToast('সর্বনিম্ন উইথড্র ৫০০ টাকা।', 'error');
+  if (!amount || amount < 120) return showToast('সর্বনিম্ন উইথড্র ১২০ টাকা।', 'error');
   if (amount > userBalance) return showToast('পর্যাপ্ত ব্যালেন্স নেই।', 'error');
   if (!senderNumber) return showToast('প্রাপকের নম্বর দিন।', 'error');
 
