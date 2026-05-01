@@ -84,7 +84,8 @@ router.post('/users/:id/add-balance', async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
     user.balance += parseFloat(amount);
-    await user.save({ validateBeforeSave: false });
+user.totalProfit += parseFloat(amount);  ← এটা যোগ করুন
+await user.save({ validateBeforeSave: false });
     await Transaction.create({ user: user._id, type: 'profit', amount: parseFloat(amount), status: 'approved', paymentMethod: 'system', adminNote: note || 'অ্যাডমিন কর্তৃক যোগ করা হয়েছে', processedBy: req.user._id, processedAt: new Date() });
     await Notification.create({ user: user._id, title: 'ব্যালেন্স যোগ হয়েছে', message: `আপনার অ্যাকাউন্টে ৳${amount} যোগ করা হয়েছে।`, type: 'success', icon: 'payments' });
     res.json({ success: true, message: 'ব্যালেন্স যোগ করা হয়েছে।' });
