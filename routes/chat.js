@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Chat = require('../models/Chat');
-const { protect } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 const DEFAULT_MSG = 'আসসালামুয়ালাইকুম! বিনিয়োগ অ্যাপে স্বাগতম 🎉 আপনার সমস্যা বা প্রশ্ন লিখুন, আমরা শীঘ্রই সাড়া দেব। ধন্যবাদ! 💚';
 
@@ -46,7 +46,7 @@ router.post('/', protect, async (req, res) => {
 });
 
 // GET /api/chat/all — admin সব chat দেখবে
-router.get('/all', protect, async (req, res) => {
+router.get('/all', protect, adminOnly, async (req, res) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
     const chats = await Chat.find().populate('user', 'name mobile').sort({ updatedAt: -1 });
@@ -57,7 +57,7 @@ router.get('/all', protect, async (req, res) => {
 });
 
 // POST /api/chat/:userId/reply — admin reply করবে
-router.post('/:userId/reply', protect, async (req, res) => {
+router.post('/:userId/reply', protect, adminOnly, async (req, res) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'অ্যাক্সেস নেই।' });
     const { message } = req.body;
