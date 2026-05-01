@@ -461,7 +461,7 @@ function showSection(sec) {
   document.getElementById('sectionTitle').textContent = sectionTitles[sec][0];
   document.getElementById('sectionSub').textContent = sectionTitles[sec][1];
   document.querySelectorAll('.sidebar .nav-item').forEach((el,i) => {
-    const secs = ['dashboard','deposits','withdraws','users','plans','broadcast','settings','support'];
+    const secs = ['dashboard','deposits','withdraws','users','plans','investments','broadcast','settings','support'];
     el.classList.toggle('active', secs[i] === sec);
   });
   currentSection = sec;
