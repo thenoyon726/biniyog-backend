@@ -99,7 +99,7 @@ router.get('/history', protect, async (req, res) => {
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
-      .populate('plan', 'name');
+      .populate({ path: 'plan', select: 'name', strictPopulate: false });
 
     res.json({ success: true, transactions: txns, pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) } });
   } catch (err) {
