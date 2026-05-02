@@ -2,7 +2,7 @@
    বিনিয়োগ অ্যাপ - Shared Utilities v2.0
    ════════════════════════════════════════════════ */
 
-const API_BASE = 'https://biniyog-backend.vercel.app/api';
+const API_BASE = 'https://biniyog-backend.onrender.com/api';
 
 // ── Auth Helpers ─────────────────────────────────
 function getToken() { return localStorage.getItem('biniyog_token'); }
