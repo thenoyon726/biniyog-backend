@@ -328,4 +328,31 @@ router.post('/users/:id/notify', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
+// GET /api/admin/referrals
+router.get('/referrals', async (req, res) => {
+  try {
+    const { page = 1, limit = 20, search } = req.query;
+    const query = { role: 'user', referralCount: { $gt: 0 } };
+    if (search) query.$or = [{ name: { $regex: search, $options: 'i' } }, { mobile: { $regex: search, $options: 'i' } }];
+
+    const total = await User.countDocuments(query);
+    const users = await User.find(query)
+      .sort({ referralCount: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .select('name mobile referralCode referralCount referralEarnings createdAt');
+
+    // প্রতিটি user এর referred accounts আনো
+    const usersWithReferrals = await Promise.all(users.map(async u => {
+      const referredUsers = await User.find({ referredBy: u._id })
+        .select('name mobile createdAt')
+        .sort({ createdAt: -1 });
+      return { ...u.toObject(), referredUsers };
+    }));
+
+    res.json({ success: true, users: usersWithReferrals, pagination: { total, page: parseInt(page), pages: Math.ceil(total / limit) } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 module.exports = router;
