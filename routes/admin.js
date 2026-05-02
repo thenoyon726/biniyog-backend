@@ -80,20 +80,43 @@ router.put('/users/:id/toggle', async (req, res) => {
 // POST /api/admin/users/:id/add-balance
 router.post('/users/:id/add-balance', async (req, res) => {
   try {
-    const { amount, note } = req.body;
+    const { amount, note, balType } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
-    user.balance += parseFloat(amount);
-user.totalProfit += parseFloat(amount);
-await user.save({ validateBeforeSave: false });
-    await Transaction.create({ user: user._id, type: 'profit', amount: parseFloat(amount), status: 'approved', paymentMethod: 'system', adminNote: note || 'অ্যাডমিন কর্তৃক যোগ করা হয়েছে', processedBy: req.user._id, processedAt: new Date() });
-    await Notification.create({ user: user._id, title: 'ব্যালেন্স যোগ হয়েছে', message: `আপনার অ্যাকাউন্টে ৳${amount} যোগ করা হয়েছে।`, type: 'success', icon: 'payments' });
+
+    const amt = parseFloat(amount);
+    user.balance += amt;
+
+    // type অনুযায়ী আলাদা field update
+    let notifTitle, notifMsg, txnType;
+    if (balType === 'deposit_bonus') {
+      txnType = 'deposit_bonus';
+      notifTitle = '💰 ডিপোজিট বোনাস পেয়েছেন!';
+      notifMsg = `আপনার অ্যাকাউন্টে ৳${amt} ডিপোজিট বোনাস যোগ হয়েছে।`;
+    } else if (balType === 'referral_bonus') {
+      txnType = 'referral';
+      user.referralEarnings += amt;
+      notifTitle = '🎁 রেফারেল বোনাস পেয়েছেন!';
+      notifMsg = `আপনার রেফারেল বোনাস ৳${amt} অ্যাকাউন্টে যোগ হয়েছে।`;
+    } else if (balType === 'vip_bonus') {
+      txnType = 'vip_bonus';
+      notifTitle = '👑 VIP Membership বোনাস পেয়েছেন!';
+      notifMsg = `আপনার VIP Membership বোনাস ৳${amt} অ্যাকাউন্টে যোগ হয়েছে।`;
+    } else {
+      txnType = 'profit';
+      user.totalProfit += amt;
+      notifTitle = '📈 মুনাফা যোগ হয়েছে!';
+      notifMsg = `আপনার অ্যাকাউন্টে ৳${amt} মুনাফা যোগ হয়েছে।`;
+    }
+
+    await user.save({ validateBeforeSave: false });
+    await Transaction.create({ user: user._id, type: txnType, amount: amt, status: 'approved', paymentMethod: 'system', adminNote: note || notifTitle, processedBy: req.user._id, processedAt: new Date() });
+    await Notification.create({ user: user._id, title: notifTitle, message: notifMsg, type: 'success', icon: 'payments' });
     res.json({ success: true, message: 'ব্যালেন্স যোগ করা হয়েছে।' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
-
 // ── Transactions ─────────────────────────
 // GET /api/admin/transactions
 router.get('/transactions', async (req, res) => {
