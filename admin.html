@@ -684,7 +684,8 @@ async function loadUsers() {
           <button class="btn ${u.isActive?'btn-reject':'btn-approve'}" onclick="toggleUser('${u._id}','${u.name}',${u.isActive})">
             ${u.isActive ? '🔒 বন্ধ' : '✓ চালু'}
           </button>
-          <button class="btn btn-secondary btn-sm" onclick="quickAddBalance('${u._id}','${u.name}')">+ ব্যালেন্স</button>
+         <button class="btn btn-secondary btn-sm" onclick="quickAddBalance('${u._id}','${u.name}')">+ ব্যালেন্স</button>
+         <button class="btn btn-secondary btn-sm" onclick="resetPassword('${u._id}','${u.name}')">🔐 পাসওয়ার্ড</button>
         </div>
       </td>
     </tr>
@@ -1094,6 +1095,20 @@ async function loadInvestments() {
     </tr>
   `).join('');
   renderAdminPagination('investmentPagination', data.pagination, invPage, p => { invPage = p; loadInvestments(); });
+}
+  async function resetPassword(id, name) {
+  const newPassword = prompt(`${name} এর নতুন পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর):`);
+  if (!newPassword || newPassword.length < 6) {
+    if (newPassword !== null) showToast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।', 'error');
+    return;
+  }
+  if (!confirm(`${name} এর পাসওয়ার্ড পরিবর্তন করবেন?`)) return;
+  const data = await apiFetch(`/admin/users/${id}/reset-password`, {
+    method: 'PUT',
+    body: { newPassword }
+  });
+  if (data?.success) showToast(data.message, 'success');
+  else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
 }
 // ── Init ──────────────────────────────────
 const initSection = window.location.hash.replace('#','') || 'dashboard';
