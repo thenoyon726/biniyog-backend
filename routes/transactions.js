@@ -47,6 +47,21 @@ router.post('/deposit', protect, async (req, res) => {
 // POST /api/transaction/withdraw
 router.post('/withdraw', protect, async (req, res) => {
   try {
+    // ── উইথড্র সময় চেক (সকাল ১০টা - সন্ধ্যা ৬টা, বাংলাদেশ সময়) ──
+    const now = new Date();
+    const bdTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
+    const hour = bdTime.getHours();
+    const minute = bdTime.getMinutes();
+    const currentMinutes = hour * 60 + minute;
+    const openMinutes = 10 * 60;   // সকাল ১০:০০
+    const closeMinutes = 18 * 60;  // সন্ধ্যা ৬:০০
+
+    if (currentMinutes < openMinutes || currentMinutes >= closeMinutes) {
+      return res.status(400).json({
+        success: false,
+        message: 'উইথড্র সময় শেষ। সকাল ১০:০০ থেকে সন্ধ্যা ৬:০০ এর মধ্যে উইথড্র করুন।'
+      });
+    }
     const { amount, paymentMethod, senderNumber } = req.body;
     const user = await User.findById(req.user._id);
 
