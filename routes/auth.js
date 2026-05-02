@@ -114,5 +114,51 @@ router.put('/change-password', protect, async (req, res) => {
     res.status(500).json({ success: false, message: 'পাসওয়ার্ড পরিবর্তন ব্যর্থ।' });
   }
 });
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { name, mobile } = req.body;
+    if (!name || !mobile) return res.status(400).json({ success: false, message: 'নাম ও মোবাইল নম্বর দিন।' });
+
+    const user = await User.findOne({ mobile });
+    if (!user) return res.status(404).json({ success: false, message: 'এই নম্বরে কোনো অ্যাকাউন্ট নেই।' });
+
+    // নাম match করো (case insensitive)
+    const inputName = name.trim().toLowerCase();
+    const userName = user.name.trim().toLowerCase();
+    if (inputName !== userName) return res.status(400).json({ success: false, message: 'নাম ও মোবাইল নম্বর মিলছে না।' });
+
+    // Temporary token generate করো
+    const token = require('crypto').randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 মিনিট
+    await user.save({ validateBeforeSave: false });
+
+    res.json({ success: true, message: 'যাচাই সফল!', resetToken: token });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+    if (!resetToken || !newPassword) return res.status(400).json({ success: false, message: 'সব তথ্য দিন।' });
+    if (newPassword.length < 6) return res.status(400).json({ success: false, message: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' });
+
+    const user = await User.findOne({ resetToken, resetTokenExpiry: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ success: false, message: 'লিংক মেয়াদ শেষ। আবার চেষ্টা করুন।' });
+
+    user.password = newPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    res.json({ success: true, message: 'পাসওয়ার্ড পরিবর্তন হয়েছে! এখন লগইন করুন।' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 
 module.exports = router;
