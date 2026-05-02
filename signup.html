@@ -276,6 +276,7 @@
         localStorage.setItem('biniyog_token', data.token);
         localStorage.setItem('biniyog_user', JSON.stringify(data.user));
         showToast(data.message || 'অ্যাকাউন্ট তৈরি সফল!', 'success');
+        sessionStorage.setItem('showWelcomePopup', 'true');
         setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
       } else {
         errorMsg.textContent = data.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।';
