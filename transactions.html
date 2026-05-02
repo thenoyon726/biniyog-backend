@@ -114,7 +114,7 @@ async function loadTransactions() {
 
   const icons = { deposit:'💰', withdraw:'💸', profit:'📈', investment:'🏦', referral:'🎁', refund:'↩️' };
   const colors = { deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', investment:'var(--blue-dim)', referral:'var(--gold-dim)', refund:'var(--surface3)' };
-  const isPos = t => ['deposit','profit','referral','refund'].includes(t);
+  const isPos = t => ['deposit','profit','referral','refund','deposit_bonus','vip_bonus'].includes(t);
 
   el.innerHTML = data.transactions.map(t => `
     <div class="txn-row">
