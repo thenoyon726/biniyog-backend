@@ -426,5 +426,53 @@ loadDashboard();
 loadTransactions();
 loadInvestments();
 </script>
+  <!-- ========== WELCOME POPUP ========== -->
+<div id="welcomePopup" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; border-radius:20px; width:92%; max-width:400px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:popupIn 0.4s ease;">
+    <div style="background:linear-gradient(135deg,#ff9a9e,#fecfef,#ffecd2); padding:28px 20px 20px; text-align:center;">
+      <div style="font-size:48px; margin-bottom:8px;">💬</div>
+      <div style="display:inline-block; background:linear-gradient(135deg,#a18cd1,#fbc2eb); color:#fff; font-size:11px; font-weight:700; padding:4px 14px; border-radius:20px; letter-spacing:1px;">NEW</div>
+    </div>
+    <div style="padding:22px 24px 28px; text-align:center;">
+      <h2 style="font-size:20px; font-weight:800; color:#1a1a1a; margin:0 0 16px;">🏦 বিনিয়োগ অ্যাপ</h2>
+      <p style="font-size:14px; color:#444; line-height:1.8; margin:0 0 12px;">
+        হালো! এই প্ল্যাটফর্মে আপনাকে স্বাগতম! এখানে, আপনি দিনে মাত্র এক থেকে দুই ঘন্টা সময় ব্যয় করে <strong>২০০০-১০,০০০ টাকা</strong> আয় করতে পারবেন।
+      </p>
+      <p style="font-size:14px; color:#444; line-height:1.8; margin:0;">
+        পুরো লেনদেন জুড়ে আপনার তহবিল নিরাপদ থাকবে। ব্যবসায়ী আমাদের প্ল্যাটফর্মে <strong>৫০ লক্ষ বাংলাদেশি টাকা</strong> নিরাপত্তা আমানত হিসেবে জমা দিয়েছেন। যদি ব্যবসায়ী সময়মতো কমিশন দিতে ব্যর্থ হন, তাহলে আমরা আপনাকে ক্ষতিপূরণ হিসেবে কমিশনের <strong>১০ গুণ অর্থ প্রদানের</strong> প্রতিশ্রুতি দিচ্ছি।
+      </p>
+    </div>
+    <div style="padding:0 24px 24px; text-align:center;">
+      <button onclick="closeWelcomePopup()" style="width:48px; height:48px; border-radius:50%; border:2px solid #ddd; background:#fff; font-size:20px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:#666;">✕</button>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes popupIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+function showWelcomePopup() {
+  const shouldShow = sessionStorage.getItem('showWelcomePopup');
+  if (shouldShow === 'true') {
+    document.getElementById('welcomePopup').style.display = 'flex';
+    sessionStorage.removeItem('showWelcomePopup');
+  }
+}
+
+function closeWelcomePopup() {
+  document.getElementById('welcomePopup').style.display = 'none';
+}
+
+document.getElementById('welcomePopup').addEventListener('click', function(e) {
+  if (e.target === this) closeWelcomePopup();
+});
+
+setTimeout(showWelcomePopup, 800);
+</script>
 </body>
 </html>
