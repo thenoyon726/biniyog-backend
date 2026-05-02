@@ -300,6 +300,15 @@ td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
           <input type="number" id="balAmount" class="form-input" placeholder="যোগ করার পরিমাণ"/>
         </div>
         <div class="form-group">
+          <label class="form-label">বোনাসের ধরন</label>
+          <select id="balType" class="form-input">
+            <option value="profit">📈 মুনাফা</option>
+            <option value="deposit_bonus">💰 ডিপোজিট বোনাস</option>
+            <option value="referral_bonus">🎁 রেফার বোনাস</option>
+            <option value="vip_bonus">👑 VIP Membership বোনাস</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label class="form-label">নোট</label>
           <input type="text" id="balNote" class="form-input" placeholder="কারণ লিখুন (ঐচ্ছিক)"/>
         </div>
@@ -784,13 +793,31 @@ async function addBalance() {
   if (!foundUserId) return showToast('আগে সঠিক মোবাইল নম্বর দিয়ে ইউজার খুঁজুন।','error');
   const amount = parseFloat(document.getElementById('balAmount').value);
   const note = document.getElementById('balNote').value.trim();
+  const balType = document.getElementById('balType').value;
   if (!amount || amount <= 0) return showToast('সঠিক পরিমাণ দিন।','error');
+
+  const typeLabels = {
+    profit: '📈 মুনাফা',
+    deposit_bonus: '💰 ডিপোজিট বোনাস',
+    referral_bonus: '🎁 রেফার বোনাস',
+    vip_bonus: '👑 VIP Membership বোনাস'
+  };
+
   const btn = document.getElementById('addBalBtn');
   btn.disabled = true; btn.textContent = 'যোগ হচ্ছে...';
-  const data = await apiFetch(`/admin/users/${foundUserId}/add-balance`, { method:'POST', body:{ amount, note } });
+  const data = await apiFetch(`/admin/users/${foundUserId}/add-balance`, {
+    method:'POST',
+    body:{ amount, note: note || typeLabels[balType], balType }
+  });
   btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">add</span> ব্যালেন্স যোগ করুন';
-  if (data?.success) { showToast(data.message,'success'); document.getElementById('balAmount').value=''; document.getElementById('balNote').value=''; document.getElementById('balMobile').value=''; document.getElementById('foundUser').textContent=''; foundUserId=null; }
-  else showToast(data?.message||'সমস্যা।','error');
+  if (data?.success) {
+    showToast(data.message,'success');
+    document.getElementById('balAmount').value='';
+    document.getElementById('balNote').value='';
+    document.getElementById('balMobile').value='';
+    document.getElementById('foundUser').textContent='';
+    foundUserId=null;
+  } else showToast(data?.message||'সমস্যা।','error');
 }
 
 // ── Pagination Helper ─────────────────────
