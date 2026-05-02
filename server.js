@@ -112,7 +112,6 @@ const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 10000,
   socketTimeoutMS: 45000,
-  bufferCommands: false,
   maxPoolSize: 10
 })
   .then(() => console.log('✅ MongoDB সংযুক্ত!'))
