@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "login.html",
-      "use": "@vercel/static"
+      "src": "backend/server.js",
+      "use": "@vercel/node"
     },
     {
       "src": "*.html",
@@ -17,11 +17,19 @@
       "src": "*.js",
       "use": "@vercel/static",
       "config": {
-        "includeFiles": ["shared.js"]
+        "excludeFiles": ["backend/**"]
       }
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
     {
       "src": "/",
       "dest": "/login.html"
@@ -36,6 +44,10 @@
     },
     {
       "src": "/(.*\\.js)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*\\.png)",
       "dest": "/$1"
     }
   ]
