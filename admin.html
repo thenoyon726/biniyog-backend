@@ -1111,7 +1111,9 @@ async function loadInvestments() {
 const validSections = ['dashboard','deposits','withdraws','users','plans','investments','referrals','broadcast','settings','support'];
 
 function initPage() {
-  const hash = window.location.hash.replace('#','');
+  const hash = window.location.hash.replace('#','') 
+    || sessionStorage.getItem('adminLastSection') 
+    || 'dashboard';
   const initSection = validSections.includes(hash) ? hash : 'dashboard';
   showSection(initSection);
 }
