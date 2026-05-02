@@ -986,7 +986,8 @@ async function openChatModal(userId, userName) {
   currentChatUserId = userId;
   document.getElementById('chatModalTitle').textContent = userName + ' এর চ্যাট';
   document.getElementById('chatModal').classList.add('open');
-  const data = await apiFetch('/admin/chat/all');
+  document.getElementById('adminChatMessages').innerHTML = '<div class="spinner"></div>';
+  const data = await apiFetch('/chat/all');
   const chat = data?.chats?.find(c => c.user?._id === userId);
   const el = document.getElementById('adminChatMessages');
   if (!chat) { el.innerHTML = '<p>কোনো বার্তা নেই</p>'; return; }
@@ -1006,7 +1007,7 @@ function closeChatModal() {
 async function sendAdminReply() {
   const msg = document.getElementById('adminReplyInput').value.trim();
   if (!msg || !currentChatUserId) return;
-  const data = await apiFetch(`/admin/chat/${currentChatUserId}/reply`, { method:'POST', body:{ message: msg } });
+  const data = await apiFetch(`/chat/${currentChatUserId}/reply`, { method:'POST', body:{ message: msg } });
   if (data?.success) {
     document.getElementById('adminReplyInput').value = '';
     openChatModal(currentChatUserId, document.getElementById('chatModalTitle').textContent.replace(' এর চ্যাট',''));
