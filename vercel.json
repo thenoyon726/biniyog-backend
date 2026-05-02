@@ -6,15 +6,23 @@
       "use": "@vercel/node"
     },
     {
-      "src": "*.html",
+      "src": "**/*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "*.css",
+      "src": "**/*.css",
       "use": "@vercel/static"
     },
     {
-      "src": "*.png",
+      "src": "**/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.xml",
       "use": "@vercel/static"
     }
   ],
@@ -28,15 +36,7 @@
       "dest": "/login.html"
     },
     {
-      "src": "/(.*\\.html)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*\\.css)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*\\.png)",
+      "src": "/(.*)",
       "dest": "/$1"
     }
   ]
