@@ -135,6 +135,11 @@ async function refreshUser() {
 document.addEventListener('DOMContentLoaded', () => {
   loadSidebarUser();
   loadNotifCount();
+  // Admin hash restore — admin.html এ থাকলে hash save করো
+  if (window.location.pathname.includes('admin')) {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) sessionStorage.setItem('adminLastSection', hash);
+  }
   // Sidebar overlay click to close
   document.getElementById('sidebarOverlay')?.addEventListener('click', toggleSidebar);
   // Set active nav item
