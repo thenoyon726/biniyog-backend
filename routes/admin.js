@@ -355,4 +355,29 @@ router.get('/referrals', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
+// PUT /api/admin/users/:id/reset-password
+router.put('/users/:id/reset-password', async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user || user.role === 'admin') {
+      return res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
+    }
+    user.password = newPassword;
+    await user.save();
+    await Notification.create({
+      user: user._id,
+      title: '🔐 পাসওয়ার্ড পরিবর্তন',
+      message: 'আপনার পাসওয়ার্ড Admin দ্বারা পরিবর্তন করা হয়েছে।',
+      type: 'warning',
+      icon: 'lock'
+    });
+    res.json({ success: true, message: `${user.name} এর পাসওয়ার্ড পরিবর্তন হয়েছে।` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 module.exports = router;
