@@ -136,14 +136,4 @@ router.delete('/:id', protect, async (req, res) => {
   }
 });
 
-// DELETE /api/notifications — সব notification মুছুন
-router.delete('/', protect, async (req, res) => {
-  try {
-    await Notification.deleteMany({ user: req.user._id });
-    res.json({ success: true, message: 'সব নোটিফিকেশন মুছে ফেলা হয়েছে।' });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
-  }
-});
-
 module.exports = router;
