@@ -316,4 +316,16 @@ router.get('/investments', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
+// POST /api/admin/users/:id/notify
+router.post('/users/:id/notify', async (req, res) => {
+  try {
+    const { title, message, type = 'info' } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
+    await Notification.create({ user: user._id, title, message, type, icon: 'notifications' });
+    res.json({ success: true, message: `${user.name} কে বার্তা পাঠানো হয়েছে।` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 module.exports = router;
