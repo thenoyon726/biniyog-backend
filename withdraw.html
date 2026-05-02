@@ -83,7 +83,7 @@
 
     <!-- Warning -->
     <div class="warning-box">
-      ⚠️ উইথড্র করার সময় শনিবার-বৃহস্পতিবার, সকাল ১০ টা থেকে সন্ধ্যা ৬ টা পর্যন্ত। উইথড্র আবেদন করার পর ব্যালেন্স হোল্ড হবে। অ্যাডমিন যাচাই করে ৫ মিনিটের মধ্যে আপনার নম্বরে পাঠাবেন।
+      ⚠️ উইথড্র সময়: প্রতিদিন সকাল ১০:০০ - সন্ধ্যা ৬:০০ (বাংলাদেশ সময়)। এই সময়ের বাইরে উইথড্র আবেদন করা যাবে না। উইথড্র আবেদন করার পর ব্যালেন্স হোল্ড হবে। অ্যাডমিন যাচাই করে ৫ মিনিটের মধ্যে আপনার নম্বরে পাঠাবেন।
     </div>
 
     <div class="card">
@@ -180,6 +180,12 @@ async function submitWithdraw() {
   const amount = parseFloat(document.getElementById('amount').value);
   const senderNumber = document.getElementById('recipientNumber').value.trim();
 
+  // উইথড্র সময় চেক (সকাল ১০টা - সন্ধ্যা ৬টা)
+  const now = new Date();
+  const bdHour = parseInt(now.toLocaleString('en-US', { timeZone: 'Asia/Dhaka', hour: 'numeric', hour12: false }));
+  if (bdHour < 10 || bdHour >= 18) {
+    return showToast('উইথড্র সময় শেষ! সকাল ১০টা থেকে সন্ধ্যা ৬টার মধ্যে উইথড্র করুন।', 'error');
+  }
   if (!amount || amount < 120) return showToast('সর্বনিম্ন উইথড্র ১২০ টাকা।', 'error');
   if (amount > userBalance) return showToast('পর্যাপ্ত ব্যালেন্স নেই।', 'error');
   if (!senderNumber) return showToast('প্রাপকের নম্বর দিন।', 'error');
