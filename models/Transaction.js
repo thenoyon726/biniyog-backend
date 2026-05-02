@@ -8,7 +8,7 @@ const transactionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['deposit', 'withdraw', 'profit', 'investment', 'referral', 'refund'],
+    enum: ['deposit', 'withdraw', 'profit', 'investment', 'referral', 'refund', 'deposit_bonus', 'vip_bonus'],
     required: true
   },
   amount: {
