@@ -108,12 +108,16 @@ cron.schedule('1 0 * * *', runDailyProfits, { timezone: 'Asia/Dhaka' });
 // ── MongoDB Connect ──────────────────────────────
 const PORT = process.env.PORT || 5000;
 
+// ── MongoDB Connect + Export ──────────────────────
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ MongoDB সংযুক্ত!');
-    app.listen(PORT, () => console.log(`🚀 সার্ভার চালু: http://localhost:${PORT}`));
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB সংযোগ ব্যর্থ:', err.message);
-    process.exit(1);
-  });
+  .then(() => console.log('✅ MongoDB সংযুক্ত!'))
+  .catch((err) => console.error('❌ MongoDB সংযোগ ব্যর্থ:', err.message));
+
+// Vercel এর জন্য export
+module.exports = app;
+
+// Local development এর জন্য
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`🚀 সার্ভার চালু: http://localhost:${PORT}`));
+}
