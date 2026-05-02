@@ -501,7 +501,6 @@ td .btn { padding:5px 10px; font-size:10px; border-radius:6px; }
 
 <script src="shared.js"></script>
 <script>
-requireAuth(true); // admin only
 
 let currentSection = 'dashboard';
 let depositFilter = 'pending', withdrawFilter = 'pending';
@@ -1109,8 +1108,22 @@ async function loadInvestments() {
   else showToast(data?.message || 'সমস্যা হয়েছে।', 'error');
 }
 // ── Init ──────────────────────────────────
-const initSection = window.location.hash.replace('#','') || 'dashboard';
-showSection(initSection);
+const validSections = ['dashboard','deposits','withdraws','users','plans','investments','referrals','broadcast','settings','support'];
+
+function initPage() {
+  const hash = window.location.hash.replace('#','');
+  const initSection = validSections.includes(hash) ? hash : 'dashboard';
+  showSection(initSection);
+}
+
+// DOM তৈরি হওয়ার পরে এবং requireAuth পাস হওয়ার পরে চালাও
+if (requireAuth(true)) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPage);
+  } else {
+    initPage();
+  }
+}
 </script>
 </body>
 </html>
