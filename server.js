@@ -50,7 +50,17 @@ app.get('/api/health', (req, res) => {
 
 // ── Frontend SPA Fallback ───────────────────────
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend', 'login.html'));
+  const file = req.path.replace('/', '') || 'login.html';
+  const allowedFiles = [
+    'login.html', 'signup.html', 'dashboard.html', 'admin.html',
+    'deposit.html', 'withdraw.html', 'support.html', 
+    'notifications.html', 'investments.html', 'profile.html'
+  ];
+  if (allowedFiles.includes(file)) {
+    res.sendFile(path.join(__dirname, '../frontend', file));
+  } else {
+    res.sendFile(path.join(__dirname, '../frontend', 'login.html'));
+  }
 });
 
 // ── Error Handler ───────────────────────────────
