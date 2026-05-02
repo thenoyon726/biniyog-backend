@@ -347,6 +347,7 @@
         localStorage.setItem('biniyog_token', data.token);
         localStorage.setItem('biniyog_user', JSON.stringify(data.user));
         showToast(data.message || 'লগইন সফল!', 'success');
+        sessionStorage.setItem('showWelcomePopup', 'true');
         setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
       } else {
         errorMsg.textContent = data.message || 'লগইন ব্যর্থ হয়েছে।';
