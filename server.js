@@ -109,7 +109,12 @@ cron.schedule('1 0 * * *', runDailyProfits, { timezone: 'Asia/Dhaka' });
 const PORT = process.env.PORT || 5000;
 
 // ── MongoDB Connect + Export ──────────────────────
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  bufferCommands: false,
+  maxPoolSize: 10
+})
   .then(() => console.log('✅ MongoDB সংযুক্ত!'))
   .catch((err) => console.error('❌ MongoDB সংযোগ ব্যর্থ:', err.message));
 
