@@ -532,8 +532,8 @@ function showSection(sec) {
     const secs = ['dashboard','deposits','withdraws','users','plans','investments','referrals','broadcast','settings','support'];
     el.classList.toggle('active', secs[i] === sec);
   });
-  currentSection = sec;
-window.location.hash = sec;
+currentSection = sec;
+localStorage.setItem('adminSection', sec);
   if (sec === 'dashboard') { loadStats(); loadQuick(); }
   if (sec === 'deposits') loadDeposits();
   if (sec === 'withdraws') loadWithdraws();
@@ -1111,10 +1111,8 @@ async function loadInvestments() {
 const validSections = ['dashboard','deposits','withdraws','users','plans','investments','referrals','broadcast','settings','support'];
 
 function initPage() {
-  const hash = window.location.hash.replace('#','') 
-    || sessionStorage.getItem('adminLastSection') 
-    || 'dashboard';
-  const initSection = validSections.includes(hash) ? hash : 'dashboard';
+  const saved = localStorage.getItem('adminSection') || 'dashboard';
+  const initSection = validSections.includes(saved) ? saved : 'dashboard';
   showSection(initSection);
 }
 
