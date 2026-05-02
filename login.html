@@ -124,7 +124,7 @@
           <div class="space-y-xs">
             <div class="flex justify-between items-center">
               <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider" for="password">পাসওয়ার্ড</label>
-              <a class="font-label-bold text-label-bold text-primary hover:underline" href="#">পাসওয়ার্ড ভুলে গেছেন?</a>
+              <a class="font-label-bold text-label-bold text-primary hover:underline cursor-pointer" onclick="showForgotForm()">পাসওয়ার্ড ভুলে গেছেন?</a>
             </div>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
@@ -149,6 +149,42 @@
           </div>
         </form>
 
+        <!-- Forgot Password Form -->
+        <div id="forgotForm" style="display:none" class="space-y-md mt-md">
+          <div style="background:rgba(253,192,3,0.1);border:1px solid rgba(253,192,3,0.3);border-radius:10px;padding:12px;font-size:13px;color:#785900">
+            🔐 আপনার নাম ও মোবাইল নম্বর দিয়ে যাচাই করুন
+          </div>
+          <div class="space-y-xs">
+            <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider">আপনার নাম</label>
+            <input class="w-full px-md py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none font-body-md" id="forgotName" placeholder="অ্যাকাউন্টে দেওয়া নাম" type="text"/>
+          </div>
+          <div class="space-y-xs">
+            <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider">মোবাইল নম্বর</label>
+            <input class="w-full px-md py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none font-body-md" id="forgotMobile" placeholder="০১৮XXXXXXXX" type="tel"/>
+          </div>
+          <div id="forgotError" class="hidden bg-error-container text-on-error-container text-body-sm p-sm rounded-lg"></div>
+          <div style="display:flex;gap:10px">
+            <button onclick="showLoginForm()" class="flex-1 py-[14px] bg-surface-container border border-outline-variant rounded-lg font-body-md text-on-surface-variant">← ফিরে যান</button>
+            <button onclick="verifyForgot()" id="verifyBtn" class="flex-1 py-[14px] bg-primary text-white rounded-lg font-body-md font-bold">যাচাই করুন</button>
+          </div>
+        </div>
+
+        <!-- Reset Password Form -->
+        <div id="resetForm" style="display:none" class="space-y-md mt-md">
+          <div style="background:rgba(13,99,27,0.1);border:1px solid rgba(13,99,27,0.3);border-radius:10px;padding:12px;font-size:13px;color:#0d631b">
+            ✅ যাচাই সফল! এখন নতুন পাসওয়ার্ড দিন
+          </div>
+          <div class="space-y-xs">
+            <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider">নতুন পাসওয়ার্ড</label>
+            <input class="w-full px-md py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none font-body-md" id="newPassword" placeholder="নূন্যতম ৬ অক্ষর" type="password"/>
+          </div>
+          <div class="space-y-xs">
+            <label class="font-label-bold text-label-bold text-on-surface-variant block uppercase tracking-wider">পাসওয়ার্ড নিশ্চিত করুন</label>
+            <input class="w-full px-md py-[14px] bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none font-body-md" id="confirmPassword" placeholder="আবার লিখুন" type="password"/>
+          </div>
+          <div id="resetError" class="hidden bg-error-container text-on-error-container text-body-sm p-sm rounded-lg"></div>
+          <button onclick="resetPassword()" id="resetBtn" class="w-full py-[14px] bg-primary text-white rounded-lg font-body-md font-bold">পাসওয়ার্ড পরিবর্তন করুন</button>
+        </div>
         <!-- Divider -->
         <div class="relative my-lg flex items-center">
           <div class="flex-grow border-t border-outline-variant"></div>
@@ -203,6 +239,74 @@
     setTimeout(() => toast.classList.add('hidden'), 4000);
   }
 
+  // ─── Forgot Password ───────────────────────
+  let resetToken = null;
+
+  function showForgotForm() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('forgotForm').style.display = 'block';
+    document.getElementById('resetForm').style.display = 'none';
+  }
+
+  function showLoginForm() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('forgotForm').style.display = 'none';
+    document.getElementById('resetForm').style.display = 'none';
+  }
+
+  async function verifyForgot() {
+    const name = document.getElementById('forgotName').value.trim();
+    const mobile = document.getElementById('forgotMobile').value.trim();
+    const errEl = document.getElementById('forgotError');
+    const btn = document.getElementById('verifyBtn');
+    errEl.classList.add('hidden');
+    if (!name || !mobile) { errEl.textContent = 'নাম ও মোবাইল নম্বর দিন।'; errEl.classList.remove('hidden'); return; }
+    btn.disabled = true; btn.textContent = 'যাচাই হচ্ছে...';
+    try {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, mobile })
+      });
+      const data = await res.json();
+      if (data.success) {
+        resetToken = data.resetToken;
+        document.getElementById('forgotForm').style.display = 'none';
+        document.getElementById('resetForm').style.display = 'block';
+      } else {
+        errEl.textContent = data.message || 'যাচাই ব্যর্থ হয়েছে।';
+        errEl.classList.remove('hidden');
+      }
+    } catch { errEl.textContent = 'সার্ভার সমস্যা।'; errEl.classList.remove('hidden'); }
+    finally { btn.disabled = false; btn.textContent = 'যাচাই করুন'; }
+  }
+
+  async function resetPassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errEl = document.getElementById('resetError');
+    const btn = document.getElementById('resetBtn');
+    errEl.classList.add('hidden');
+    if (!newPassword || newPassword.length < 6) { errEl.textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।'; errEl.classList.remove('hidden'); return; }
+    if (newPassword !== confirmPassword) { errEl.textContent = 'পাসওয়ার্ড দুটো মিলছে না।'; errEl.classList.remove('hidden'); return; }
+    btn.disabled = true; btn.textContent = 'পরিবর্তন হচ্ছে...';
+    try {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resetToken, newPassword })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        setTimeout(() => { showLoginForm(); }, 1500);
+      } else {
+        errEl.textContent = data.message || 'পরিবর্তন ব্যর্থ হয়েছে।';
+        errEl.classList.remove('hidden');
+      }
+    } catch { errEl.textContent = 'সার্ভার সমস্যা।'; errEl.classList.remove('hidden'); }
+    finally { btn.disabled = false; btn.textContent = 'পাসওয়ার্ড পরিবর্তন করুন'; }
+  }
   // ─── Login Form Submit ─────────────────────
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
