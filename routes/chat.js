@@ -71,5 +71,14 @@ router.post('/:userId/reply', protect, adminOnly, async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
   }
 });
+// DELETE /api/chat/:userId — admin chat মুছবে
+router.delete('/:userId', protect, adminOnly, async (req, res) => {
+  try {
+    await Chat.findOneAndDelete({ user: req.params.userId });
+    res.json({ success: true, message: 'চ্যাট মুছে ফেলা হয়েছে।' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'সার্ভার সমস্যা।' });
+  }
+});
 
 module.exports = router;
