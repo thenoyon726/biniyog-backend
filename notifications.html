@@ -59,6 +59,7 @@
     </div>
     <div class="topbar-right">
       <button class="btn btn-secondary btn-sm" onclick="markAllRead()">সব পড়া হয়েছে ✓</button>
+<button class="btn btn-reject btn-sm" onclick="deleteAllNotif()">🗑 সব মুছুন</button>
     </div>
   </div>
 
@@ -94,8 +95,9 @@ async function loadNotifications() {
       <div class="notif-body">
         <div class="notif-title">${n.title}</div>
         <div class="notif-msg">${n.message}</div>
-        <div class="notif-time">${formatDateTime(n.createdAt)}</div>
+  <div class="notif-time">${formatDateTime(n.createdAt)}</div>
       </div>
+      <button onclick="deleteNotif('${n._id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:0 4px;align-self:flex-start">🗑</button>
     </div>
   `).join('');
 }
@@ -106,6 +108,18 @@ async function markAllRead() {
   loadNotifications();
   // Update badges
   document.querySelectorAll('.notif-badge').forEach(b => b.style.display = 'none');
+}
+  async function deleteNotif(id) {
+  const data = await apiFetch(`/notifications/${id}`, { method: 'DELETE' });
+  if (data?.success) { showToast('মুছে ফেলা হয়েছে।', 'success'); loadNotifications(); }
+  else showToast(data?.message || 'সমস্যা।', 'error');
+}
+
+async function deleteAllNotif() {
+  if (!confirm('সব নোটিফিকেশন মুছে ফেলবেন?')) return;
+  const data = await apiFetch('/notifications', { method: 'DELETE' });
+  if (data?.success) { showToast('সব মুছে ফেলা হয়েছে ✅', 'success'); loadNotifications(); }
+  else showToast(data?.message || 'সমস্যা।', 'error');
 }
 
 loadNotifications();
