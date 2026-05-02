@@ -291,5 +291,188 @@
     }
   });
 </script>
+  <!-- =====================================================
+   শর্তবলী ও গোপনীয়তা নীতি POPUP SCRIPT
+   আপনার signup.html এ </body> ট্যাগের আগে paste করুন
+   ===================================================== -->
+
+<!-- STEP 1: আপনার শর্তবলী লিংকটা এভাবে রাখুন (যদি না থাকে বদলে নিন) -->
+<!--
+  <a href="#" id="termsLink">শর্তবলী</a>
+  এবং
+  <a href="#" id="privacyLink">গোপনীয়তা নীতি</a>
+-->
+
+<!-- STEP 2: নিচের সব HTML + CSS + JS কপি করে </body> এর আগে paste করুন -->
+
+<!-- ========== MODAL HTML ========== -->
+<div id="termsModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.55); align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:14px; width:92%; max-width:540px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:18px 22px 14px; border-bottom:1px solid #e8e8e8; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:8px; background:#e8f5e9; display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a6b3a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <span style="font-size:16px; font-weight:600; color:#1a1a1a;">শর্তবলী</span>
+      </div>
+      <button onclick="closeModal('termsModal')" style="background:none; border:none; cursor:pointer; font-size:22px; color:#999; line-height:1; padding:0;">&#x2715;</button>
+    </div>
+    <div style="padding:18px 22px; overflow-y:auto; flex:1; font-family:inherit;">
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1a6b3a; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">১. অ্যাকাউন্ট সংক্রান্ত</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">১৮ বছরের উপরে যেকোনো বাংলাদেশি নাগরিক অ্যাকাউন্ট খুলতে পারবেন।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">একজন ব্যক্তি শুধুমাত্র একটি অ্যাকাউন্ট খুলতে পারবেন।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">সঠিক তথ্য দিয়ে অ্যাকাউন্ট খুলতে হবে; ভুল তথ্য দিলে অ্যাকাউন্ট বাতিল হবে।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1a6b3a; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">২. বিনিয়োগ সংক্রান্ত</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">সর্বনিম্ন বিনিয়োগ ১০০ টাকা।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">বিনিয়োগ করার পর মেয়াদ শেষ হওয়ার আগে তোলা যাবে না।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">মুনাফা প্রতিদিন অ্যাকাউন্টে যোগ হবে।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1a6b3a; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">৩. ডিপোজিট ও উইথড্র</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">ডিপোজিট করার পর Admin অনুমোদন করলে ব্যালেন্সে যোগ হবে।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">সর্বনিম্ন উইথড্র ১২০ টাকা।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">উইথড্র আবেদনের ২৪–৪৮ ঘণ্টার মধ্যে প্রসেস হবে।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">জালিয়াতি বা ভুল ট্রানজেকশন আইডি দিলে অ্যাকাউন্ট বাতিল হবে।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1a6b3a; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">৪. রেফারেল সংক্রান্ত</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">রেফারেল বোনাস শুধুমাত্র নতুন অ্যাকাউন্টের জন্য প্রযোজ্য।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">একই ব্যক্তি একাধিক অ্যাকাউন্ট দিয়ে রেফারেল করলে বোনাস বাতিল হবে।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <p style="font-size:13px; font-weight:600; color:#1a6b3a; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">৫. অ্যাকাউন্ট বন্ধ</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">অনিয়ম বা জালিয়াতির ক্ষেত্রে অ্যাকাউন্ট বন্ধ করার অধিকার কর্তৃপক্ষ সংরক্ষণ করে।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">অ্যাকাউন্ট বন্ধ হলে ব্যালেন্স ফেরত দেওয়া হবে না।</li>
+        </ul>
+      </div>
+
+    </div>
+    <div style="padding:14px 22px; border-top:1px solid #e8e8e8; display:flex; justify-content:flex-end; gap:10px;">
+      <button onclick="closeModal('termsModal')" style="padding:9px 20px; border-radius:8px; border:1px solid #ddd; background:#fff; color:#555; font-size:13.5px; cursor:pointer;">বন্ধ করুন</button>
+      <button onclick="closeModal('termsModal')" style="padding:9px 22px; border-radius:8px; border:none; background:#1a6b3a; color:#fff; font-size:13.5px; font-weight:600; cursor:pointer;">বুঝেছি ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PRIVACY MODAL ========== -->
+<div id="privacyModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.55); align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:14px; width:92%; max-width:540px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:18px 22px 14px; border-bottom:1px solid #e8e8e8; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:8px; background:#e3f2fd; display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <span style="font-size:16px; font-weight:600; color:#1a1a1a;">গোপনীয়তা নীতি</span>
+      </div>
+      <button onclick="closeModal('privacyModal')" style="background:none; border:none; cursor:pointer; font-size:22px; color:#999; line-height:1; padding:0;">&#x2715;</button>
+    </div>
+    <div style="padding:18px 22px; overflow-y:auto; flex:1; font-family:inherit;">
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1565c0; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">১. তথ্য সংগ্রহ</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">আমরা শুধুমাত্র নাম, মোবাইল নম্বর ও পেমেন্ট তথ্য সংগ্রহ করি।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">আপনার তথ্য তৃতীয় পক্ষের কাছে বিক্রি করা হয় না।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1565c0; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">২. তথ্য সুরক্ষা</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">সকল তথ্য এনক্রিপ্টেড আকারে সংরক্ষিত থাকে।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">আপনার পাসওয়ার্ড আমাদের কাছে দৃশ্যমান নয়।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <p style="font-size:13px; font-weight:600; color:#1565c0; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">৩. কুকি ও ট্র্যাকিং</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">আমরা শুধুমাত্র লগইন session এর জন্য কুকি ব্যবহার করি।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">আপনার ব্রাউজিং তথ্য তৃতীয় পক্ষের সাথে শেয়ার করা হয় না।</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <p style="font-size:13px; font-weight:600; color:#1565c0; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">৪. আপনার অধিকার</p>
+        <ul style="margin:0; padding-left:18px; list-style:disc;">
+          <li style="font-size:13.5px; color:#444; line-height:1.7; margin-bottom:4px;">আপনি যেকোনো সময় আপনার তথ্য মুছে ফেলার অনুরোধ করতে পারবেন।</li>
+          <li style="font-size:13.5px; color:#444; line-height:1.7;">অ্যাকাউন্ট বন্ধ করলে আপনার সকল তথ্য মুছে ফেলা হবে।</li>
+        </ul>
+      </div>
+
+    </div>
+    <div style="padding:14px 22px; border-top:1px solid #e8e8e8; display:flex; justify-content:flex-end; gap:10px;">
+      <button onclick="closeModal('privacyModal')" style="padding:9px 20px; border-radius:8px; border:1px solid #ddd; background:#fff; color:#555; font-size:13.5px; cursor:pointer;">বন্ধ করুন</button>
+      <button onclick="closeModal('privacyModal')" style="padding:9px 22px; border-radius:8px; border:none; background:#1565c0; color:#fff; font-size:13.5px; font-weight:600; cursor:pointer;">বুঝেছি ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // Backdrop click করলে বন্ধ হবে
+  document.getElementById('termsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal('termsModal');
+  });
+  document.getElementById('privacyModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal('privacyModal');
+  });
+
+  // ESC key চাপলে বন্ধ হবে
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal('termsModal');
+      closeModal('privacyModal');
+    }
+  });
+
+  // আপনার শর্তবলী ও গোপনীয়তা নীতি লিংকে এই function call করুন:
+  // শর্তবলী লিংকে:    onclick="openModal('termsModal'); return false;"
+  // গোপনীয়তা নীতিতে: onclick="openModal('privacyModal'); return false;"
+</script>
+
+<!-- =====================================================
+   কিভাবে ব্যবহার করবেন:
+
+   আপনার checkbox লাইনটা এভাবে রাখুন:
+
+   <label>
+     <input type="checkbox" name="agree">
+     আমি আমাদের
+    <a href="#" onclick="openModal('termsModal'); return false;">শর্তবলী</a>
+<a href="#" onclick="openModal('privacyModal'); return false;">গোপনীয়তা নীতি</a>
+     মেনে নিচ্ছি।
+   </label>
+   ===================================================== -->
+
 </body>
 </html>
