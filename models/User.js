@@ -91,6 +91,14 @@ referralEarnings: {
     type: Date,
     default: null
   },
+  resetToken: {
+    type: String,
+    default: null
+  },
+  resetTokenExpiry: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
