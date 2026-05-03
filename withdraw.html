@@ -186,6 +186,11 @@ async function submitWithdraw() {
   if (bdHour < 10 || bdHour >= 18) {
     return showToast('উইথড্র সময় শেষ! সকাল ১০টা থেকে সন্ধ্যা ৬টার মধ্যে উইথড্র করুন।', 'error');
   }
+  // প্লান চেক
+  const userData = await apiFetch('/plans/my-investments');
+  if (!userData?.investments?.length) {
+    return showToast('উইথড্র করতে হলে আগে কমপক্ষে একটি বিনিয়োগ প্ল্যান কিনতে হবে!', 'error');
+  }
   if (!amount || amount < 120) return showToast('সর্বনিম্ন উইথড্র ১২০ টাকা।', 'error');
   if (amount > userBalance) return showToast('পর্যাপ্ত ব্যালেন্স নেই।', 'error');
   if (!senderNumber) return showToast('প্রাপকের নম্বর দিন।', 'error');
