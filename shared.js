@@ -67,17 +67,47 @@ async function loadNotifCount() {
   } catch {}
 }
 
-// ── Toast ────────────────────────────────────────
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
-  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
-  toast.innerHTML = `<span>${icon}</span><span id="toastMsg">${msg}</span>`;
-  toast.className = `toast show ${type}`;
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('show'), 3500);
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
 }
 
+function showToast(msg, type = 'info') {
+  const old = document.getElementById('slideToast');
+  if (old) old.remove();
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+  const colors = { success:'#0d631b', error:'#ba1a1a', warning:'#b45309', info:'#1565c0' };
+  const toast = document.createElement('div');
+  toast.id = 'slideToast';
+  toast.style.cssText = `
+    position:fixed; top:-80px; left:50%; transform:translateX(-50%);
+    z-index:99999; background:${colors[type]||colors.info}; color:white;
+    padding:14px 22px; border-radius:12px; font-family:'Manrope',sans-serif;
+    font-size:13.5px; font-weight:600; display:flex; align-items:center;
+    gap:10px; box-shadow:0 8px 30px rgba(0,0,0,0.25);
+    transition:top 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    min-width:280px; max-width:90vw; white-space:nowrap;
+  `;
+  toast.innerHTML = `<span style="font-size:18px">${icon}</span><span>${msg}</span>`;
+  document.body.appendChild(toast);
+  playNotifSound();
+  setTimeout(() => { toast.style.top = '20px'; }, 10);
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.style.top = '-80px';
+    setTimeout(() => toast.remove(), 400);
+  }, 3500);
+}
 // ── Sidebar Mobile ───────────────────────────────
 function toggleSidebar() {
   document.getElementById('sidebar')?.classList.toggle('open');
