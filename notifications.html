@@ -8,85 +8,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="shared.css"/>
 <style>
-.notif-item {
-  display:flex; gap:12px; padding:14px; border-radius:12px;
-  background:var(--surface); border:1px solid var(--border);
-  margin-bottom:8px; transition:.15s; position:relative;
-}
-.notif-item.unread { border-color:rgba(26,158,46,0.25); background:rgba(26,158,46,0.04); }
-.notif-item:hover { border-color:var(--border2); }
-.notif-dot { width:7px; height:7px; background:var(--primary); border-radius:50%; position:absolute; top:14px; right:14px; }
-.notif-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px; }
-.notif-body { flex:1; }
-.notif-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px; }
-.notif-msg { font-size:11px; color:var(--text2); line-height:1.5; }
-.notif-time { font-size:10px; color:var(--text3); margin-top:5px; }
+.notif-tabs { display:flex; gap:4px; background:var(--surface2); border-radius:12px; padding:4px; margin-bottom:16px; }
+.notif-tab { flex:1; padding:9px 12px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; color:var(--text3); text-align:center; transition:.15s; }
+.notif-tab.active { background:var(--surface); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+.alert-item { display:flex; gap:12px; padding:14px; border-radius:12px; background:rgba(253,192,3,0.06); border:1px solid rgba(253,192,3,0.25); margin-bottom:8px; }
+.alert-icon { width:40px; height:40px; border-radius:10px; background:rgba(253,192,3,0.15); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
 </style>
-</head>
-<body>
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo"><div class="logo-icon">💰</div><div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div></div>
-  <nav>
-    <div class="nav-section">
-      <div class="nav-label">মূল মেনু</div>
-      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
-      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
-      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
-      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
-      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">অন্যান্য</div>
-      <a class="nav-item active" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
-      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="user-avatar" id="sidebarAvatar">?</div>
-      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
-      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
-    </div>
-  </div>
-</aside>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<main class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title">🔔 নোটিফিকেশন</div>
-      <div class="topbar-sub">আপনার সব আপডেট</div>
-    </div>
-    <div class="topbar-right">
-      <button class="btn btn-secondary btn-sm" onclick="markAllRead()">সব পড়া হয়েছে ✓</button>
-<button class="btn btn-reject btn-sm" onclick="deleteAllNotif()">🗑 সব মুছুন</button>
-    </div>
-  </div>
-
-  <div class="page-content" style="max-width:680px">
-    <div id="notifList">
-      <div style="text-align:center;padding:50px;color:var(--text3)"><div class="spinner"></div></div>
-    </div>
-  </div>
-</main>
-
-<div class="toast" id="toast"></div>
-<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
 
 <script src="shared.js"></script>
 <script>
 requireAuth();
 
+let currentTab = 'notifications';
+
 const typeColors = { success:'var(--primary-glow)', error:'var(--red-dim)', warning:'var(--gold-dim)', info:'var(--surface2)', deposit:'var(--primary-glow)', withdraw:'var(--red-dim)', profit:'var(--gold-dim)', system:'var(--blue-dim)' };
+
+// Tab switch
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'notifications') loadNotifications();
+  else loadAlerts();
+}
 
 async function loadNotifications() {
   const data = await apiFetch('/notifications');
   const el = document.getElementById('notifList');
-  if (!data?.success || !data.notifications.length) {
+
+  // শুধু system/warning/campaign ছাড়া notifications
+  const notifs = data?.notifications?.filter(n => n.type !== 'alert') || [];
+
+  if (!data?.success || !notifs.length) {
     el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">notifications_off</span><p>কোনো নোটিফিকেশন নেই</p></div>';
     return;
   }
-  el.innerHTML = data.notifications.map(n => `
+  el.innerHTML = notifs.map(n => `
     <div class="notif-item ${n.isRead?'':'unread'}">
       ${!n.isRead ? '<div class="notif-dot"></div>' : ''}
       <div class="notif-icon" style="background:${typeColors[n.type]||'var(--surface2)'}">
@@ -95,7 +52,31 @@ async function loadNotifications() {
       <div class="notif-body">
         <div class="notif-title">${n.title}</div>
         <div class="notif-msg">${n.message}</div>
-  <div class="notif-time">${formatDateTime(n.createdAt)}</div>
+        <div class="notif-time">${formatDateTime(n.createdAt)}</div>
+      </div>
+      <button onclick="deleteNotif('${n._id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:0 4px;align-self:flex-start">🗑</button>
+    </div>
+  `).join('');
+}
+
+async function loadAlerts() {
+  const data = await apiFetch('/notifications');
+  const el = document.getElementById('notifList');
+
+  // শুধু warning/alert type
+  const alerts = data?.notifications?.filter(n => n.type === 'warning' || n.type === 'alert' || n.icon === 'campaign') || [];
+
+  if (!alerts.length) {
+    el.innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">campaign</span><p>কোনো সতর্কবার্তা নেই</p></div>';
+    return;
+  }
+  el.innerHTML = alerts.map(n => `
+    <div class="alert-item">
+      <div class="alert-icon">⚠️</div>
+      <div class="notif-body">
+        <div class="notif-title" style="color:#b45309">${n.title}</div>
+        <div class="notif-msg">${n.message}</div>
+        <div class="notif-time">${formatDateTime(n.createdAt)}</div>
       </div>
       <button onclick="deleteNotif('${n._id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:0 4px;align-self:flex-start">🗑</button>
     </div>
@@ -106,19 +87,19 @@ async function markAllRead() {
   await apiFetch('/notifications/read-all', { method:'PUT' });
   showToast('সব নোটিফিকেশন পড়া হয়েছে।', 'success');
   loadNotifications();
-  // Update badges
   document.querySelectorAll('.notif-badge').forEach(b => b.style.display = 'none');
 }
-  async function deleteNotif(id) {
+
+async function deleteNotif(id) {
   const data = await apiFetch(`/notifications/${id}`, { method: 'DELETE' });
-  if (data?.success) { showToast('মুছে ফেলা হয়েছে।', 'success'); loadNotifications(); }
+  if (data?.success) { showToast('মুছে ফেলা হয়েছে।', 'success'); switchTab(currentTab); }
   else showToast(data?.message || 'সমস্যা।', 'error');
 }
 
 async function deleteAllNotif() {
   if (!confirm('সব নোটিফিকেশন মুছে ফেলবেন?')) return;
   const data = await apiFetch('/notifications', { method: 'DELETE' });
-  if (data?.success) { showToast('সব মুছে ফেলা হয়েছে ✅', 'success'); loadNotifications(); }
+  if (data?.success) { showToast('সব মুছে ফেলা হয়েছে ✅', 'success'); switchTab(currentTab); }
   else showToast(data?.message || 'সমস্যা।', 'error');
 }
 
