@@ -62,6 +62,15 @@ router.post('/withdraw', protect, async (req, res) => {
         message: 'উইথড্র সময় শেষ। সকাল ১০:০০ থেকে সন্ধ্যা ৬:০০ এর মধ্যে উইথড্র করুন।'
       });
     }
+    // ── প্লান চেক: কমপক্ষে একটা বিনিয়োগ থাকতে হবে ──
+    const Investment = require('../models/Investment');
+    const hasInvestment = await Investment.findOne({ user: req.user._id });
+    if (!hasInvestment) {
+      return res.status(400).json({
+        success: false,
+        message: 'উইথড্র করতে হলে আগে কমপক্ষে একটি বিনিয়োগ প্ল্যান কিনতে হবে।'
+      });
+    }
     const { amount, paymentMethod, senderNumber } = req.body;
     const user = await User.findById(req.user._id);
 
