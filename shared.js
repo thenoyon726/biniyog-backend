@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Floating Support Buttons ──────────────────────
 (function() {
   const WHATSAPP_NUMBER = '8801XXXXXXXXX'; // এখানে নম্বর বসাবেন
-  const TELEGRAM_LINK = 'https://t.me/yourchannel'; // এখানে চ্যানেল লিঙ্ক বসাবেন
+  const TELEGRAM_LINK = 'https://t.me/biniyogapp_online'; // এখানে চ্যানেল লিঙ্ক বসাবেন
 
   const style = document.createElement('style');
   style.textContent = `
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const div = document.createElement('div');
   div.className = 'float-btns';
   div.innerHTML = `
-    <a href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" class="float-btn whatsapp" title="WhatsApp সাপোর্ট">💬</a>
+    <a href="https://whatsapp.com/channel/0029Vb7jPnfJuyAE05er3z29" target="_blank" class="float-btn whatsapp" title="WhatsApp চ্যানেল">💬</a>
     <a href="${TELEGRAM_LINK}" target="_blank" class="float-btn telegram" title="Telegram চ্যানেল">✈️</a>
     <a href="support.html" class="float-btn chat" title="লাইভ চ্যাট">🎧</a>
   `;
