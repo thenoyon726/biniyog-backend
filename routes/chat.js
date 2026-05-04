@@ -3,7 +3,7 @@ const router = express.Router();
 const Chat = require('../models/Chat');
 const { protect, adminOnly } = require('../middleware/auth');
 
-const DEFAULT_MSG = `আসসালামুয়ালাইকুম! বিনিয়োগ অ্যাপে স্বাগতম 🎉\n\nযেকোনো সমস্যা বা সহযোগিতার জন্য আমাদের সাথে সরাসরি যোগাযোগ করুন উপরে থাকা WhatsApp এবং Telegram Contact-এ আমরা সবসময় নিয়োজিত আছি আপনাদের সেবা প্রদানে। ধন্যবাদ! 💚\n\nসাপোর্ট টিমঃ বিনিয়োগ অথেরিটি।`;
+const DEFAULT_MSG = `আসসালামুয়ালাইকুম! বিনিয়োগ অ্যাপে স্বাগতম 🎉\n\nযেকোনো সমস্যা বা সহযোগিতার জন্য আমাদের লাইভ চ্যাটে সংযুক্ত থাকুন। প্রতিদিনের আপডেট জানতে আমাদের WhatsApp এবং Telegram চ্যানেল ফলো করুন, আমরা সবসময় নিয়োজিত আছি আপনাদের সেবা প্রদানে। ধন্যবাদ! 💚\n\nসাপোর্ট টিমঃ বিনিয়োগ অথেরিটি।`;
 // GET /api/chat — user এর chat লোড করো
 router.get('/', protect, async (req, res) => {
   try {
