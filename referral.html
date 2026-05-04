@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>রেফারেল - বিনিয়োগ অ্যাপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.ref-hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.ref-hero::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+.ref-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.ref-hero-icon { font-size: 40px; margin-bottom: 8px; display: block; }
+.ref-hero h2 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.ref-hero p { font-size: 13px; color: rgba(255,255,255,0.8); }
+.ref-code-box {
+  background: rgba(255,255,255,0.15);
+  border: 2px dashed rgba(255,255,255,0.4);
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin: 16px 0;
+  position: relative;
+  z-index: 1;
+}
+.ref-code-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+.ref-code-text { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 4px; }
+.ref-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: relative; z-index: 1; }
+.ref-btn {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.ref-btn-copy { background: rgba(255,255,255,0.2); color: #fff; }
+.ref-btn-share { background: #fff; color: var(--primary); }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.stat-val { font-size: 20px; font-weight: 800; color: var(--primary); display: block; }
+.stat-label { font-size: 10px; color: var(--text3); margin-top: 4px; display: block; font-weight: 600; }
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bonus-levels { display: flex; flex-direction: column; gap: 10px; }
+.bonus-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.bonus-left { display: flex; align-items: center; gap: 10px; }
+.bonus-icon { font-size: 22px; }
+.bonus-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.bonus-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.bonus-pct {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold);
+  background: rgba(245,158,11,0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.how-steps { display: flex; flex-direction: column; gap: 12px; }
+.how-step { display: flex; gap: 14px; align-items: flex-start; }
+.step-num {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--primary-glow);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-text { font-size: 13px; color: var(--text2); line-height: 1.5; padding-top: 4px; }
+.step-text strong { color: var(--text); }
+.link-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+.link-text { font-size: 12px; color: var(--text3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.link-copy-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">💰</div><div><div class="logo-text">বিনিয়োগ</div><div class="logo-sub">Investment Platform</div></div></div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">মূল মেনু</div>
+      <a class="nav-item" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> ড্যাশবোর্ড</a>
+      <a class="nav-item" href="deposit.html"><span class="material-symbols-outlined">payments</span> ডিপোজিট</a>
+      <a class="nav-item" href="withdraw.html"><span class="material-symbols-outlined">account_balance_wallet</span> উইথড্র</a>
+      <a class="nav-item" href="plans.html"><span class="material-symbols-outlined">trending_up</span> বিনিয়োগ প্ল্যান</a>
+      <a class="nav-item" href="transactions.html"><span class="material-symbols-outlined">receipt_long</span> লেনদেন</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">অন্যান্য</div>
+      <a class="nav-item active" href="referral.html"><span class="material-symbols-outlined">group_add</span> রেফারেল</a>
+      <a class="nav-item" href="notifications.html"><span class="material-symbols-outlined">notifications</span> নোটিফিকেশন</a>
+      <a class="nav-item" href="profile.html"><span class="material-symbols-outlined">person</span> প্রোফাইল</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-info"><div class="user-name" id="sidebarName">লোড...</div><div class="user-role" id="sidebarRole">সদস্য</div></div>
+      <span class="material-symbols-outlined logout-btn" onclick="logout()">logout</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">🎁 রেফারেল প্রোগ্রাম</div>
+      <div class="topbar-sub">বন্ধুদের আমন্ত্রণ করুন এবং আয় করুন</div>
+    </div>
+    <div class="topbar-right">
+      <a class="icon-btn" href="notifications.html"><span class="material-symbols-outlined" style="font-size:18px">notifications</span><span class="badge notif-badge" style="display:none">0</span></a>
+    </div>
+  </div>
+
+  <div class="page-content" style="max-width:600px">
+    <!-- Hero -->
+    <div class="ref-hero">
+      <span class="ref-hero-icon">🎁</span>
+      <h2>বন্ধু আনুন, আয় করুন!</h2>
+      <p>প্রতিটি রেফারেলে বোনাস আয় করুন</p>
+      <div class="ref-code-box">
+        <div class="ref-code-label">আপনার রেফারেল কোড</div>
+        <div class="ref-code-text" id="refCode">লোড হচ্ছে...</div>
+      </div>
+      <div class="ref-actions">
+        <button class="ref-btn ref-btn-copy" onclick="copyCode()">
+          <span class="material-symbols-outlined" style="font-size:16px">content_copy</span> কোড কপি
+        </button>
+        <button class="ref-btn ref-btn-share" onclick="shareLink()">
+          <span class="material-symbols-outlined" style="font-size:16px">share</span> লিংক শেয়ার
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-val" id="refCount">০</span>
+        <span class="stat-label">মোট রেফার</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="refEarnings">৳০</span>
+        <span class="stat-label">মোট আয়</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="refBonus">০%</span>
+        <span class="stat-label">বোনাস রেট</span>
+      </div>
+    </div>
+
+    <!-- Referral Link -->
+    <div class="section-card">
+      <div class="section-title"><span class="material-symbols-outlined">link</span> রেফারেল লিংক</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:10px">নিচের লিংক শেয়ার করুন — বন্ধু সাইন আপ করলেই বোনাস পাবেন!</p>
+      <div class="link-box">
+        <span class="link-text" id="refLink">লোড হচ্ছে...</span>
+        <button class="link-copy-btn" onclick="copyLink()">কপি</button>
+      </div>
+    </div>
+
+    <!-- Bonus Levels -->
+    <div class="section-card">
+      <div class="section-title"><span class="material-symbols-outlined">emoji_events</span> বোনাস মাইলস্টোন</div>
+      <div class="bonus-levels">
+        <div class="bonus-item">
+          <div class="bonus-left">
+            <span class="bonus-icon">🥉</span>
+            <div>
+              <div class="bonus-name">স্টার্টার</div>
+              <div class="bonus-desc">৫ রেফার সম্পন্ন</div>
+            </div>
+          </div>
+          <span class="bonus-pct">+১০%</span>
+        </div>
+        <div class="bonus-item">
+          <div class="bonus-left">
+            <span class="bonus-icon">🥈</span>
+            <div>
+              <div class="bonus-name">সিলভার</div>
+              <div class="bonus-desc">২০ রেফার সম্পন্ন</div>
+            </div>
+          </div>
+          <span class="bonus-pct">+২৫%</span>
+        </div>
+        <div class="bonus-item">
+          <div class="bonus-left">
+            <span class="bonus-icon">🥇</span>
+            <div>
+              <div class="bonus-name">গোল্ড</div>
+              <div class="bonus-desc">৫০ রেফার সম্পন্ন</div>
+            </div>
+          </div>
+          <span class="bonus-pct">+৫০%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="section-card">
+      <div class="section-title"><span class="material-symbols-outlined">help_outline</span> কীভাবে কাজ করে?</div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-num">১</div>
+          <div class="step-text">আপনার <strong>রেফারেল কোড বা লিংক</strong> বন্ধুদের সাথে শেয়ার করুন</div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">২</div>
+          <div class="step-text">বন্ধু আপনার কোড দিয়ে <strong>সাইন আপ</strong> করুক</div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">৩</div>
+          <div class="step-text">বন্ধু <strong>প্রথম ডিপোজিট</strong> করলে আপনি বোনাস পাবেন</div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">৪</div>
+          <div class="step-text">বোনাস সরাসরি আপনার <strong>ব্যালেন্সে</strong> যোগ হবে</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<button class="menu-toggle" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="font-size:18px">menu</span> মেনু</button>
+
+<script src="shared.js"></script>
+<script>
+requireAuth();
+
+async function loadReferral() {
+  const user = await refreshUser();
+  if (!user) return;
+
+  const code = user.referralCode || '—';
+  const link = `${window.location.origin}/signup.html?ref=${code}`;
+
+  document.getElementById('refCode').textContent = code;
+  document.getElementById('refLink').textContent = link;
+  document.getElementById('refCount').textContent = user.referralCount || '০';
+  document.getElementById('refEarnings').textContent = formatBDTEn(user.referralEarnings);
+
+  const count = user.referralCount || 0;
+  let rate = '০%';
+  if (count >= 50) rate = '৫০%';
+  else if (count >= 20) rate = '২৫%';
+  else if (count >= 5) rate = '১০%';
+  document.getElementById('refBonus').textContent = rate;
+}
+
+function copyCode() {
+  const code = document.getElementById('refCode').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('রেফারেল কোড কপি হয়েছে! ✅', 'success'));
+}
+
+function copyLink() {
+  const link = document.getElementById('refLink').textContent;
+  navigator.clipboard.writeText(link).then(() => showToast('রেফারেল লিংক কপি হয়েছে! ✅', 'success'));
+}
+
+function shareLink() {
+  const code = document.getElementById('refCode').textContent;
+  const link = `${window.location.origin}/signup.html?ref=${code}`;
+  if (navigator.share) {
+    navigator.share({ title: 'বিনিয়োগ অ্যাপ', text: `আমার রেফারেল কোড দিয়ে সাইন আপ করুন! কোড: ${code}`, url: link });
+  } else {
+    navigator.clipboard.writeText(link).then(() => showToast('রেফারেল লিংক কপি হয়েছে! ✅', 'success'));
+  }
+}
+
+loadReferral();
+</script>
+</body>
+</html>
